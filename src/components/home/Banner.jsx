@@ -113,76 +113,31 @@ const Banner = () => {
 
                 {/* ================= OVERLAY ================= */}
                 <div
-                  className="
-                    absolute
-                    inset-0
-                    bg-gradient-to-r
-                    from-[#062B63]/90
-                    via-[#062B63]/45
-                    to-transparent
-                  "
+                  className="absolute inset-0 bg-gradient-to-r from-[#062B63]/90 via-[#062B63]/45 to-transparent"
                 />
 
                 {/* ================= CONTENT ================= */}
                 <div
-                  className="
-                    relative
-                    z-10
-                    h-full
-                    max-w-[1500px]
-                    mx-auto
-                    px-5
-                    sm:px-8
-                    md:px-12
-                    lg:px-16
-                    flex
-                    items-center
-                  "
+                  className="relative z-10 h-full max-w-[1500px] mx-auto px-5 sm:px-8 md:px-12 lg:px-16 flex items-center"
                 >
                   <div className="max-w-[600px] text-white">
                     {/* Subtitle */}
                     <p
-                      className="
-                        text-[#8BE28F]
-                        text-xs
-                        sm:text-sm
-                        md:text-base
-                        font-bold
-                        tracking-[2px]
-                        mb-3
-                        md:mb-5
-                      "
+                      className="text-[#8BE28F] text-xs sm:text-sm md:text-base font-bold tracking-[2px] mb-3 md:mb-5"
                     >
                       {slide.subtitle}
                     </p>
 
                     {/* Title */}
                     <h1
-                      className="
-                        text-3xl
-                        sm:text-4xl
-                        md:text-5xl
-                        lg:text-6xl
-                        font-extrabold
-                        leading-tight
-                      "
+                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight"
                     >
                       {slide.title}
                     </h1>
 
                     {/* Description */}
                     <p
-                      className="
-                        mt-3
-                        md:mt-5
-                        text-sm
-                        sm:text-base
-                        md:text-lg
-                        text-white/90
-                        leading-6
-                        md:leading-8
-                        max-w-[530px]
-                      "
+                      className="mt-3 md:mt-5 text-sm sm:text-base md:text-lg text-white/90 leading-6 md:leading-8 max-w-[530px]"
                     >
                       {slide.description}
                     </p>
@@ -190,27 +145,7 @@ const Banner = () => {
                     {/* Button */}
                     <Link
                       href={slide.link}
-                      className="
-                        inline-flex
-                        items-center
-                        gap-2
-                        mt-5
-                        md:mt-7
-                        px-5
-                        sm:px-7
-                        py-3
-                        bg-[#16863D]
-                        hover:bg-[#0f6d30]
-                        text-white
-                        rounded-md
-                        font-semibold
-                        text-sm
-                        sm:text-base
-                        shadow-lg
-                        transition-all
-                        duration-300
-                        hover:-translate-y-1
-                      "
+                      className="inline-flex items-center gap-2 mt-5 md:mt-7 px-5 sm:px-7 py-3 bg-[#16863D] hover:bg-[#0f6d30] text-white rounded-md font-semibold text-sm sm:text-base shadow-lg transition-all duration-300 hover:-translate-y-1"
                     >
                       {slide.button}
 
@@ -225,62 +160,14 @@ const Banner = () => {
 
         {/* ================= PREVIOUS ================= */}
         <button
-          className="
-            banner-prev
-            absolute
-            left-3
-            md:left-5
-            lg:left-8
-            top-1/2
-            -translate-y-1/2
-            z-20
-            w-9
-            h-9
-            md:w-12
-            md:h-12
-            rounded-full
-            bg-white/80
-            hover:bg-[#16863D]
-            hover:text-white
-            text-[#062B63]
-            flex
-            items-center
-            justify-center
-            shadow-lg
-            transition-all
-            duration-300
-          "
+          className="banner-prev absolute left-3 md:left-5 lg:left-8 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-12 md:h-12 rounded-full bg-white/80 hover:bg-[#16863D] hover:text-white text-[#062B63] flex items-center justify-center shadow-lg transition-all duration-300"
         >
           <ChevronLeft size={22} />
         </button>
 
         {/* ================= NEXT ================= */}
         <button
-          className="
-            banner-next
-            absolute
-            right-3
-            md:right-5
-            lg:right-8
-            top-1/2
-            -translate-y-1/2
-            z-20
-            w-9
-            h-9
-            md:w-12
-            md:h-12
-            rounded-full
-            bg-white/80
-            hover:bg-[#16863D]
-            hover:text-white
-            text-[#062B63]
-            flex
-            items-center
-            justify-center
-            shadow-lg
-            transition-all
-            duration-300
-          "
+          className="banner-next absolute right-3 md:right-5 lg:right-8 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-12 md:h-12 rounded-full bg-white/80 hover:bg-[#16863D] hover:text-white text-[#062B63] flex items-center justify-center shadow-lg transition-all duration-300"
         >
           <ChevronRight size={22} />
         </button>
