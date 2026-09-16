@@ -1,14 +1,8 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import {
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  Quote,
-} from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 const reviews = [
   {
@@ -86,18 +80,14 @@ const CustomerReviews = () => {
   };
 
   const prevSlide = () => {
-    setCurrent((prev) =>
-      prev === 0 ? totalSlides - 1 : prev - 1
-    );
+    setCurrent((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
   };
 
   return (
     <section className="py-16 md:py-20 bg-white dark:bg-black transition-colors duration-300">
       <div className="container mx-auto px-4">
-
         {/* Header */}
         <div className="text-center mb-12">
-
           <p className="text-sm uppercase tracking-widest font-semibold text-blue-600 dark:text-blue-400 mb-2">
             Customer Feedback
           </p>
@@ -109,30 +99,21 @@ const CustomerReviews = () => {
           <p className="max-w-2xl mx-auto mt-3 text-gray-600 dark:text-gray-400">
             See what our happy customers say about their shopping experience.
           </p>
-
         </div>
 
         {/* Slider */}
         <div className="relative max-w-5xl mx-auto">
-
           {/* Review Card */}
           <div className="overflow-hidden">
-
             <div
               className="flex transition-transform duration-700 ease-in-out"
               style={{
                 transform: `translateX(-${current * 100}%)`,
               }}
             >
-
               {reviews.map((item) => (
-                <div
-                  key={item.id}
-                  className="min-w-full px-2 md:px-10"
-                >
-
+                <div key={item.id} className="min-w-full px-2 md:px-10">
                   <div className="relative bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-7 md:p-10">
-
                     {/* Quote Icon */}
                     <div className="absolute top-6 right-7 md:right-10">
                       <Quote
@@ -163,7 +144,6 @@ const CustomerReviews = () => {
 
                     {/* Customer */}
                     <div className="flex items-center gap-4 mt-8">
-
                       <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-blue-500">
                         <Image
                           src={item.image}
@@ -182,16 +162,11 @@ const CustomerReviews = () => {
                           {item.role}
                         </p>
                       </div>
-
                     </div>
-
                   </div>
-
                 </div>
               ))}
-
             </div>
-
           </div>
 
           {/* Previous Button */}
@@ -211,12 +186,10 @@ const CustomerReviews = () => {
           >
             <ChevronRight size={21} />
           </button>
-
         </div>
 
         {/* Dots */}
         <div className="flex justify-center items-center gap-2 mt-8">
-
           {reviews.map((_, index) => (
             <button
               key={index}
@@ -229,9 +202,7 @@ const CustomerReviews = () => {
               }`}
             />
           ))}
-
         </div>
-
       </div>
     </section>
   );

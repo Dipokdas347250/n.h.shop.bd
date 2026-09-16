@@ -1,17 +1,10 @@
-
 "use client";
 
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import image from "../../../public/images/image.jpg"
-import {
-  ShoppingCart,
-  Heart,
-  Star,
-  Zap,
-  Eye,
-} from "lucide-react";
+import image from "../../../public/images/image.jpg";
+import { ShoppingCart, Heart, Star, Zap, Eye } from "lucide-react";
 
 const products = [
   {
@@ -103,19 +96,15 @@ const TopSellingProducts = () => {
   // Wishlist
   const handleWishlist = (id) => {
     setWishlist((prev) =>
-      prev.includes(id)
-        ? prev.filter((item) => item !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
   return (
     <section className="py-16 bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       <div className="container mx-auto px-4">
-
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
-
           <div>
             <p className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2">
               Best Products
@@ -140,16 +129,13 @@ const TopSellingProducts = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-
           {products.map((product) => (
             <div
               key={product.id}
               className="group bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:shadow-2xl transition-all duration-300"
             >
-
               {/* Image */}
               <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
-
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -189,7 +175,6 @@ const TopSellingProducts = () => {
 
               {/* Product Info */}
               <div className="p-5">
-
                 {/* Category */}
                 <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-2">
                   {product.category}
@@ -238,7 +223,6 @@ const TopSellingProducts = () => {
 
                 {/* Buttons */}
                 <div className="grid grid-cols-2 gap-2 mt-5">
-
                   {/* Add Cart */}
                   <button
                     onClick={() => handleAddToCart(product)}
@@ -256,12 +240,10 @@ const TopSellingProducts = () => {
                     <Zap size={17} />
                     Buy Now
                   </button>
-
                 </div>
               </div>
             </div>
           ))}
-
         </div>
 
         {/* Cart Count */}
@@ -276,11 +258,9 @@ const TopSellingProducts = () => {
             </Link>
           </div>
         )}
-
       </div>
     </section>
   );
 };
 
 export default TopSellingProducts;
-

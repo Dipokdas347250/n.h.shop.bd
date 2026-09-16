@@ -3,21 +3,12 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import image from "../../../public/images/image.jpg"
+import image from "../../../public/images/image.jpg";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Autoplay,
-  Pagination,
-  Navigation,
-  EffectFade,
-} from "swiper/modules";
+import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
 
-import {
-  ChevronLeft,
-  ChevronRight,
-  ArrowRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -71,7 +62,7 @@ const slides = [
 
   {
     id: 5,
-    image:image,
+    image: image,
     title: "দ্রুত ডেলিভারি",
     subtitle: "সারা বাংলাদেশে",
     description:
@@ -84,16 +75,9 @@ const slides = [
 const Banner = () => {
   return (
     <section className="w-full bg-white">
-
       <div className="relative w-full overflow-hidden">
-
         <Swiper
-          modules={[
-            Autoplay,
-            Pagination,
-            Navigation,
-            EffectFade,
-          ]}
+          modules={[Autoplay, Pagination, Navigation, EffectFade]}
           effect="fade"
           fadeEffect={{
             crossFade: true,
@@ -114,12 +98,9 @@ const Banner = () => {
           }}
           className="nh-banner"
         >
-
           {slides.map((slide, index) => (
             <SwiperSlide key={slide.id}>
-
               <div className="relative w-full h-[300px] sm:h-[380px] md:h-[480px] lg:h-[560px]">
-
                 {/* ================= IMAGE ================= */}
                 <Image
                   src={slide.image}
@@ -158,9 +139,7 @@ const Banner = () => {
                     items-center
                   "
                 >
-
                   <div className="max-w-[600px] text-white">
-
                     {/* Subtitle */}
                     <p
                       className="
@@ -237,17 +216,12 @@ const Banner = () => {
 
                       <ArrowRight size={18} />
                     </Link>
-
                   </div>
                 </div>
-
               </div>
-
             </SwiperSlide>
           ))}
-
         </Swiper>
-
 
         {/* ================= PREVIOUS ================= */}
         <button
@@ -280,7 +254,6 @@ const Banner = () => {
           <ChevronLeft size={22} />
         </button>
 
-
         {/* ================= NEXT ================= */}
         <button
           className="
@@ -311,13 +284,10 @@ const Banner = () => {
         >
           <ChevronRight size={22} />
         </button>
-
       </div>
-
 
       {/* ================= SWIPER STYLE ================= */}
       <style jsx global>{`
-
         .nh-banner .swiper-pagination {
           bottom: 18px !important;
         }
@@ -334,11 +304,10 @@ const Banner = () => {
           width: 28px;
           border-radius: 10px;
           opacity: 1;
-          background: #16863D;
+          background: #16863d;
         }
 
         @media (max-width: 640px) {
-
           .nh-banner .swiper-pagination {
             bottom: 10px !important;
           }
@@ -351,11 +320,8 @@ const Banner = () => {
           .nh-banner .swiper-pagination-bullet-active {
             width: 22px;
           }
-
         }
-
       `}</style>
-
     </section>
   );
 };

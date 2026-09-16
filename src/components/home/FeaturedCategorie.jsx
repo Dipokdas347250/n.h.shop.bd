@@ -1,11 +1,10 @@
-
 "use client";
 
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import image from "../../../public/images/image.jpg"
+import image from "../../../public/images/image.jpg";
 
 const categories = [
   {
@@ -26,28 +25,28 @@ const categories = [
     id: 3,
     name: "Electronics",
     items: "95+ Products",
-     image: image,
+    image: image,
     link: "/category/electronics",
   },
   {
     id: 4,
     name: "Shoes",
     items: "75+ Products",
-     image: image,
+    image: image,
     link: "/category/shoes",
   },
   {
     id: 5,
     name: "Beauty",
     items: "90+ Products",
-     image: image,
+    image: image,
     link: "/category/beauty",
   },
   {
     id: 6,
     name: "Home & Living",
     items: "110+ Products",
-     image: image,
+    image: image,
     link: "/category/home-living",
   },
 ];
@@ -56,7 +55,6 @@ const FeaturedCategories = () => {
   return (
     <section className="py-16 bg-white dark:bg-black transition-colors duration-300">
       <div className="container mx-auto px-4">
-
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
           <div>
@@ -86,13 +84,8 @@ const FeaturedCategories = () => {
         {/* Categories Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
           {categories.map((category) => (
-            <Link
-              href={category.link}
-              key={category.id}
-              className="group"
-            >
+            <Link href={category.link} key={category.id} className="group">
               <div className="relative overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-900 aspect-square">
-
                 {/* Image */}
                 <Image
                   src={category.image}
@@ -126,11 +119,9 @@ const FeaturedCategories = () => {
             </Link>
           ))}
         </div>
-
       </div>
     </section>
   );
 };
 
 export default FeaturedCategories;
-
