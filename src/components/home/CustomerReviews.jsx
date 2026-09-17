@@ -9,7 +9,7 @@ const reviews = [
     id: 1,
     name: "Rahim Ahmed",
     role: "Verified Customer",
-    image: "/images/reviews/customer-1.jpg",
+    image: "/images/image.jpg",
     rating: 5,
     review:
       "Amazing shopping experience! The product quality was excellent and delivery was very fast. I will definitely shop again.",
@@ -18,7 +18,7 @@ const reviews = [
     id: 2,
     name: "Nusrat Jahan",
     role: "Verified Customer",
-    image: "/images/reviews/customer-2.jpg",
+    image: "/images/image.jpg",
     rating: 5,
     review:
       "I absolutely loved the product. The quality was even better than I expected. Customer support was also very helpful.",
@@ -27,7 +27,7 @@ const reviews = [
     id: 3,
     name: "Sakib Hasan",
     role: "Verified Customer",
-    image: "/images/reviews/customer-3.jpg",
+    image: "/images/image.jpg",
     rating: 4,
     review:
       "Very good service and genuine products. The packaging was perfect and the delivery arrived on time.",
@@ -36,7 +36,7 @@ const reviews = [
     id: 4,
     name: "Mim Akter",
     role: "Verified Customer",
-    image: "/images/reviews/customer-4.jpg",
+    image: "/images/image.jpg",
     rating: 5,
     review:
       "The website is easy to use and ordering was super simple. I am really happy with my purchase.",
@@ -45,7 +45,7 @@ const reviews = [
     id: 5,
     name: "Tanvir Hossain",
     role: "Verified Customer",
-    image: "/images/reviews/customer-5.jpg",
+    image: "/images/image.jpg",
     rating: 5,
     review:
       "Excellent product and excellent service. The price was also reasonable compared to other stores.",
@@ -54,7 +54,7 @@ const reviews = [
     id: 6,
     name: "Purnima Rani",
     role: "Verified Customer",
-    image: "/images/reviews/customer-6.jpg",
+    image: "/images/image.jpg",
     rating: 5,
     review:
       "Beautiful products, quick delivery and great customer service. Highly recommended!",

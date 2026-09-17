@@ -362,7 +362,7 @@ const AllProducts = () => {
                     {product.category}
                   </p>
 
-                  <Link href={`/product/${product.id}`}>
+                  <Link href={`/allproduct/${product.id}`}>
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1 hover:text-blue-600 transition">
                       {product.name}
                     </h2>

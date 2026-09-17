@@ -27,51 +27,58 @@ const categories = [
   {
     id: 1,
     name: "Men's Fashion",
+    slug: "mens-fashion",
     items: "120+ Products",
-    image:image,
-    link: "/category/mens-fashion",
+    image: image,
+    link: "/featuredCategories/mens-fashion",
   },
   {
     id: 2,
     name: "Women's Fashion",
+    slug: "womens-fashion",
     items: "180+ Products",
-    image:image,
-    link: "/category/womens-fashion",
+    image: image,
+    link: "/featuredCategories/womens-fashion",
   },
   {
     id: 3,
     name: "Electronics",
+    slug: "electronics",
     items: "95+ Products",
-    image:image,
-    link: "/category/electronics",
+    image: image,
+    link: "/featuredCategories/electronics",
   },
   {
     id: 4,
     name: "Shoes",
+    slug: "shoes",
     items: "75+ Products",
-    image:image,
-    link: "/category/shoes",
+    image: image,
+    link: "/featuredCategories/shoes",
   },
   {
     id: 5,
     name: "Beauty",
+    slug: "beauty",
     items: "90+ Products",
-    image:image,
-    link: "/category/beauty",
+    image: image,
+    link: "/featuredCategories/beauty",
   },
   {
     id: 6,
     name: "Home & Living",
+    slug: "home-living",
     items: "110+ Products",
-    image:image,
-    link: "/category/home-living",
+    image: image,
+    link: "/featuredCategories/home-living",
   },
   {
     id: 7,
-    name: "Home & Living",
-    items: "110+ Products",
-    image:image,
-    link: "/category/home-living",
+    name: "Accessories",
+    slug: "accessories",
+    items: "60+ Products",
+    image: image,
+    link: "/featuredCategories/accessories",
   },
 ];
 
@@ -90,14 +97,11 @@ const FeaturedCategories = () => {
               Featured Categories
             </h2>
 
-            <p className="mt-3 text-gray-600 dark:text-gray-400 max-w-xl">
-              Discover our most popular categories and find
-              everything you need in one place.
-            </p>
+           
           </div>
 
           <Link
-            href="/categories"
+            href="/featuredCategories"
             className="inline-flex items-center gap-2 font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             View All

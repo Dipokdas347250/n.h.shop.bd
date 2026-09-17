@@ -24,3 +24,20 @@
   --font-nunito: "Nunito", sans-serif;
   --font-inter: "Inter", monospace;
 }
+/* Top Selling Products Swiper */
+
+.top-selling-swiper .swiper-pagination {
+  bottom: 0 !important;
+}
+
+.top-selling-swiper .swiper-pagination-bullet {
+  width: 7px;
+  height: 7px;
+  opacity: 0.4;
+}
+
+.top-selling-swiper .swiper-pagination-bullet-active {
+  width: 20px;
+  border-radius: 10px;
+  opacity: 1;
+}
