@@ -1,16 +1,51 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, CheckCircle2, ShoppingBag } from "lucide-react";
 
-export default function CheckoutPage() {
+const products = [
+  { id: 1, name: "Premium Wireless Headphone", price: 2499, image: "/images/image.jpg" },
+  { id: 2, name: "Men's Premium Casual Shirt", price: 1199, image: "/images/image.jpg" },
+  { id: 3, name: "Smart Watch Series 8", price: 3299, image: "/images/image.jpg" },
+  { id: 4, name: "Women's Stylish Handbag", price: 1499, image: "/images/image.jpg" },
+  { id: 5, name: "Running Sports Shoes", price: 1899, image: "/images/image.jpg" },
+  { id: 6, name: "Premium Skin Care Set", price: 999, image: "/images/image.jpg" },
+  { id: 7, name: "Men's Premium Sneakers", price: 2299, image: "/images/image.jpg" },
+  { id: 8, name: "Bluetooth Portable Speaker", price: 1599, image: "/images/image.jpg" },
+  { id: 9, name: "Women's Summer Dress", price: 1399, image: "/images/image.jpg" },
+  { id: 10, name: "Modern LED Table Lamp", price: 899, image: "/images/image.jpg" },
+  { id: 11, name: "Smartphone Fast Charger", price: 699, image: "/images/image.jpg" },
+  { id: 12, name: "Premium Men's Watch", price: 1999, image: "/images/image.jpg" },
+];
+
+function CheckoutContent() {
+  const searchParams = useSearchParams();
   const [items, setItems] = useState([]);
+
+  const selectedProductId = useMemo(() => {
+    const value = searchParams.get("product");
+    return value ? Number(value) : null;
+  }, [searchParams]);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("nh-shop-cart") || "[]");
+
+    if (selectedProductId) {
+      const selected = products.find((product) => product.id === selectedProductId);
+      if (selected) {
+        const alreadyInCart = saved.some((item) => item.id === selectedProductId);
+        const nextItems = alreadyInCart
+          ? saved
+          : [{ ...selected, quantity: 1 }, ...saved];
+        setItems(nextItems);
+        return;
+      }
+    }
+
     setItems(saved);
-  }, []);
+  }, [selectedProductId]);
 
   const total = items.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
 
@@ -78,5 +113,13 @@ export default function CheckoutPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center text-gray-500">Loading checkout...</div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 }

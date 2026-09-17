@@ -418,7 +418,7 @@ const AllProducts = () => {
                       className="flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition"
                     >
                       <Zap size={17} />
-                      Buy Now
+                      Order Now
                     </button>
 
                   </div>
