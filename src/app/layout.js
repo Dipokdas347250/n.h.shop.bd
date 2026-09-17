@@ -2,6 +2,7 @@ import { Nunito,Inter } from "next/font/google";
 import "./globals.css";
 import Navber from "./common/Navber";
 import Footer from "./common/Footer";
+import MobileBottomNav from "./common/MobileBottomNav";
 
 
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
         <div>
           <Navber/>
         {children}
+        <MobileBottomNav/>
         <Footer/>
         
         </div>
