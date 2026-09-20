@@ -4,6 +4,7 @@ import Navber from "./common/Navber";
 import Footer from "./common/Footer";
 import MobileBottomNav from "./common/MobileBottomNav";
 import { ShopProvider } from "./common/ShopContext";
+import VisitTracker from "./common/VisitTracker";
 
 
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
         className={`${inter.className} ${nunito.variable}`}
       >
         <ShopProvider>
+          <VisitTracker />
           <Navber />
           {children}
           <MobileBottomNav />
