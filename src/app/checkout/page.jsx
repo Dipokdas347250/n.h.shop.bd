@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useMemo } from "react";
 import { ArrowLeft, CheckCircle2, ShoppingBag } from "lucide-react";
+import { useShop } from "../common/ShopContext";
 
 const products = [
   { id: 1, name: "Premium Wireless Headphone", price: 2499, image: "/images/image.jpg" },
@@ -22,30 +23,19 @@ const products = [
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
-  const [items, setItems] = useState([]);
+  const { cart } = useShop();
 
   const selectedProductId = useMemo(() => {
     const value = searchParams.get("product");
     return value ? Number(value) : null;
   }, [searchParams]);
 
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("nh-shop-cart") || "[]");
-
-    if (selectedProductId) {
-      const selected = products.find((product) => product.id === selectedProductId);
-      if (selected) {
-        const alreadyInCart = saved.some((item) => item.id === selectedProductId);
-        const nextItems = alreadyInCart
-          ? saved
-          : [{ ...selected, quantity: 1 }, ...saved];
-        setItems(nextItems);
-        return;
-      }
-    }
-
-    setItems(saved);
-  }, [selectedProductId]);
+  const items = useMemo(() => {
+    const selected = products.find((product) => product.id === selectedProductId);
+    return selected && !cart.some((item) => item.id === selectedProductId)
+      ? [{ ...selected, quantity: 1 }, ...cart]
+      : cart;
+  }, [cart, selectedProductId]);
 
   const total = items.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
 

@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Mail,
@@ -21,6 +21,8 @@ import {
 } from "react-icons/fa";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -46,12 +48,21 @@ const Footer = () => {
 
             <div className="w-full max-w-md">
               <form
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (email.trim()) setSubscribed(true);
+                }}
                 className="flex overflow-hidden rounded-xl bg-white p-1 shadow-lg"
               >
                 <input
                   type="email"
                   placeholder="Enter your email"
+                  required
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setSubscribed(false);
+                  }}
                   className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-gray-800 outline-none placeholder:text-gray-400"
                 />
 
@@ -60,9 +71,10 @@ const Footer = () => {
                   className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                 >
                   <Send size={17} />
-                  Subscribe
+                  {subscribed ? "Subscribed" : "Subscribe"}
                 </button>
               </form>
+              {subscribed && <p className="mt-2 text-center text-sm text-blue-100">Thanks, you are on the list.</p>}
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import image from "../../../public/images/image.jpg"
 import {
   ShoppingCart,
@@ -13,6 +14,7 @@ import {
   Search,
   SlidersHorizontal,
 } from "lucide-react";
+import { useShop } from "../../app/common/ShopContext";
 
 const products = [
   {
@@ -160,18 +162,18 @@ const categories = [
   "Accessories",
 ];
 
-const AllProducts = () => {
-  const [search, setSearch] = useState("");
+const AllProducts = ({ initialSearch = "" }) => {
+  const router = useRouter();
+  const [search, setSearch] = useState(initialSearch);
   const [category, setCategory] = useState("All");
   const [sort, setSort] = useState("default");
-  const [wishlist, setWishlist] = useState([]);
-  const [cart, setCart] = useState([]);
+  const { cart, wishlist, addToCart, toggleWishlist } = useShop();
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
       const matchSearch = product.name
         .toLowerCase()
-        .includes(search.toLowerCase());
+        .includes(search.toLowerCase()) || product.category.toLowerCase().includes(search.toLowerCase());
 
       const matchCategory =
         category === "All" || product.category === category;
@@ -198,22 +200,9 @@ const AllProducts = () => {
     return result;
   }, [search, category, sort]);
 
-  const addToCart = (product) => {
-    setCart((prev) => [...prev, product]);
-  };
-
   const buyNow = (product) => {
-    setCart((prev) => [...prev, product]);
-
-    window.location.href = `/checkout?product=${product.id}`;
-  };
-
-  const toggleWishlist = (id) => {
-    setWishlist((prev) =>
-      prev.includes(id)
-        ? prev.filter((item) => item !== id)
-        : [...prev, id]
-    );
+    addToCart(product);
+    router.push(`/checkout?product=${product.id}`);
   };
 
   return (
@@ -341,13 +330,13 @@ const AllProducts = () => {
 
                   {/* Wishlist */}
                   <button
-                    onClick={() => toggleWishlist(product.id)}
+                    onClick={() => toggleWishlist(product)}
                     className="absolute top-3 right-3 w-10 h-10 bg-white dark:bg-gray-900 rounded-full shadow-md flex items-center justify-center hover:scale-110 transition"
                   >
                     <Heart
                       size={19}
                       className={
-                        wishlist.includes(product.id)
+                        wishlist.some((item) => item.id === product.id)
                           ? "fill-red-500 text-red-500"
                           : "text-gray-700 dark:text-white"
                       }

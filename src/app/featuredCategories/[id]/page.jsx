@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ShoppingCart, Heart, Star, ShieldCheck, Truck } from "lucide-react";
+import { useShop } from "../../common/ShopContext";
 
 const categories = [
   { id: "mens-fashion", name: "Men's Fashion", description: "Premium casual essentials and sharp everyday fits.", items: [
@@ -38,25 +40,21 @@ const categories = [
 
 export default function FeaturedCategoryPage() {
   const params = useParams();
+  const router = useRouter();
+  const { addToCart: addProduct, wishlist, toggleWishlist } = useShop();
   const id = params?.id;
   const category = categories.find((item) => item.id === id);
 
   if (!category) notFound();
 
   const addToCart = (product) => {
-    const cartKey = "nh-shop-cart";
-    const stored = JSON.parse(localStorage.getItem(cartKey) || "[]");
-    const updated = [...stored, { ...product, quantity: 1 }];
-    localStorage.setItem(cartKey, JSON.stringify(updated));
-    window.location.href = "/cart";
+    addProduct(product);
+    router.push("/cart");
   };
 
   const buyNow = (product) => {
-    const cartKey = "nh-shop-cart";
-    const stored = JSON.parse(localStorage.getItem(cartKey) || "[]");
-    const updated = [...stored, { ...product, quantity: 1 }];
-    localStorage.setItem(cartKey, JSON.stringify(updated));
-    window.location.href = `/checkout?product=${product.id}`;
+    addProduct(product);
+    router.push(`/checkout?product=${product.id}`);
   };
 
   return (
@@ -108,7 +106,7 @@ export default function FeaturedCategoryPage() {
                   <button onClick={() => buyNow(product)} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700">
                     Order Now
                   </button>
-                  <button className="flex items-center justify-center rounded-xl border border-gray-300 bg-white p-3 text-gray-700 transition hover:border-blue-600 hover:text-blue-600 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                  <button onClick={() => toggleWishlist(product)} className="flex items-center justify-center rounded-xl border border-gray-300 bg-white p-3 text-gray-700 transition hover:border-blue-600 hover:text-blue-600 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
                     <Heart size={16} />
                   </button>
                 </div>

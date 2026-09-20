@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { ShoppingCart, Heart, Star, ShieldCheck, Truck, ArrowLeft } from "lucide-react";
+import { useShop } from "../../common/ShopContext";
 
 const products = [
   {
@@ -239,6 +240,8 @@ const products = [
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
+  const { addToCart: addProduct } = useShop();
   const id = params?.id;
   const product = products.find((item) => item.id === Number(id));
 
@@ -247,19 +250,13 @@ export default function ProductDetailPage() {
   }
 
   const addToCart = () => {
-    const cartKey = "nh-shop-cart";
-    const stored = JSON.parse(localStorage.getItem(cartKey) || "[]");
-    const updated = [...stored, { ...product, quantity: 1 }];
-    localStorage.setItem(cartKey, JSON.stringify(updated));
-    window.location.href = "/cart";
+    addProduct(product);
+    router.push("/cart");
   };
 
   const buyNow = () => {
-    const cartKey = "nh-shop-cart";
-    const stored = JSON.parse(localStorage.getItem(cartKey) || "[]");
-    const updated = [...stored, { ...product, quantity: 1 }];
-    localStorage.setItem(cartKey, JSON.stringify(updated));
-    window.location.href = `/checkout?product=${product.id}`;
+    addProduct(product);
+    router.push(`/checkout?product=${product.id}`);
   };
 
   return (

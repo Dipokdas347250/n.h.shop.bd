@@ -3,6 +3,7 @@ import "./globals.css";
 import Navber from "./common/Navber";
 import Footer from "./common/Footer";
 import MobileBottomNav from "./common/MobileBottomNav";
+import { ShopProvider } from "./common/ShopContext";
 
 
 
@@ -28,13 +29,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} ${nunito.variable}`}
       >
-        <div>
-          <Navber/>
-        {children}
-        <MobileBottomNav/>
-        <Footer/>
-        
-        </div>
+        <ShopProvider>
+          <Navber />
+          {children}
+          <MobileBottomNav />
+          <Footer />
+        </ShopProvider>
 
       </body>
     </html>

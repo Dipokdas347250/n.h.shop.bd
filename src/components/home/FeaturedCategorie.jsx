@@ -101,7 +101,7 @@ const FeaturedCategories = () => {
           </div>
 
           <Link
-            href="/featuredCategories"
+            href="/allproduct"
             className="inline-flex items-center gap-2 font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             View All

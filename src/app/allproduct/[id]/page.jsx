@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { ShoppingCart, Heart, Star, ShieldCheck, Truck, ArrowLeft } from "lucide-react";
+import { useShop } from "../../common/ShopContext";
 
 const products = [
   { id: 1, name: "Premium Wireless Headphone", category: "Electronics", price: 2499, oldPrice: 3499, discount: 29, rating: 4.8, reviews: 124, description: "Experience immersive sound with deep bass, crystal-clear vocals, and all-day comfort in a sleek wireless design.", features: ["40-hour battery life", "Noise reduction technology", "Fast USB-C charging", "Built-in microphone"], image: "/images/image.jpg" },
@@ -23,25 +25,21 @@ const products = [
 
 export default function AllProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
+  const { addToCart: addProduct, wishlist, toggleWishlist } = useShop();
   const id = params?.id;
   const product = products.find((item) => item.id === Number(id));
 
   if (!product) notFound();
 
   const addToCart = () => {
-    const cartKey = "nh-shop-cart";
-    const stored = JSON.parse(localStorage.getItem(cartKey) || "[]");
-    const updated = [...stored, { ...product, quantity: 1 }];
-    localStorage.setItem(cartKey, JSON.stringify(updated));
-    window.location.href = "/cart";
+    addProduct(product);
+    router.push("/cart");
   };
 
   const buyNow = () => {
-    const cartKey = "nh-shop-cart";
-    const stored = JSON.parse(localStorage.getItem(cartKey) || "[]");
-    const updated = [...stored, { ...product, quantity: 1 }];
-    localStorage.setItem(cartKey, JSON.stringify(updated));
-    window.location.href = `/checkout?product=${product.id}`;
+    addProduct(product);
+    router.push(`/checkout?product=${product.id}`);
   };
 
   return (
@@ -87,9 +85,9 @@ export default function AllProductDetailPage() {
               <button onClick={buyNow} className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-700">
                 Order Now
               </button>
-              <button className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 font-semibold text-gray-700 transition hover:border-blue-600 hover:text-blue-600 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+              <button onClick={() => toggleWishlist(product)} className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 font-semibold text-gray-700 transition hover:border-blue-600 hover:text-blue-600 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
                 <Heart size={18} />
-                Wishlist
+                {wishlist.some((item) => item.id === product.id) ? "Saved" : "Wishlist"}
               </button>
             </div>
 

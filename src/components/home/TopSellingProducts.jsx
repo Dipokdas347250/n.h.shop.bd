@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import image from "../../../public/images/image.jpg";
 
@@ -13,6 +14,7 @@ import {
   Zap,
   Eye,
 } from "lucide-react";
+import { useShop } from "../../app/common/ShopContext";
 
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -91,32 +93,21 @@ const products = [
 ];
 
 const TopSellingProducts = () => {
-  const [cart, setCart] = useState([]);
-  const [wishlist, setWishlist] = useState([]);
+  const router = useRouter();
+  const { addToCart, wishlist, toggleWishlist, cartCount } = useShop();
 
   // Add To Cart
   const handleAddToCart = (product) => {
-    setCart((prev) => [...prev, product]);
-
-    alert(`${product.name} added to cart!`);
+    addToCart(product);
   };
 
   // Buy Now
   const handleBuyNow = (product) => {
-    setCart((prev) => [...prev, product]);
-
-    window.location.href = `/checkout?product=${product.id}`;
+    addToCart(product);
+    router.push(`/checkout?product=${product.id}`);
   };
 
   // Wishlist
-  const handleWishlist = (id) => {
-    setWishlist((prev) =>
-      prev.includes(id)
-        ? prev.filter((item) => item !== id)
-        : [...prev, id]
-    );
-  };
-
   // Product Card
   const ProductCard = ({ product }) => {
     return (
@@ -139,13 +130,13 @@ const TopSellingProducts = () => {
 
           {/* Wishlist */}
           <button
-            onClick={() => handleWishlist(product.id)}
+            onClick={() => toggleWishlist(product)}
             className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md transition hover:scale-110 dark:bg-gray-900 sm:right-3 sm:top-3 sm:h-10 sm:w-10"
           >
             <Heart
               size={16}
               className={
-                wishlist.includes(product.id)
+                wishlist.some((item) => item.id === product.id)
                   ? "fill-red-500 text-red-500"
                   : "text-gray-700 dark:text-white"
               }
@@ -313,7 +304,7 @@ const TopSellingProducts = () => {
         </div>
 
         {/* Cart Count */}
-        {cart.length > 0 && (
+        {cartCount > 0 && (
           <div className="mt-8 text-center">
 
             <Link
@@ -322,7 +313,7 @@ const TopSellingProducts = () => {
             >
               <ShoppingCart size={18} />
 
-              View Cart ({cart.length})
+              View Cart ({cartCount})
             </Link>
 
           </div>

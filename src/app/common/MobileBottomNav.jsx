@@ -10,9 +10,11 @@ import {
   Search,
   UserRound,
 } from "lucide-react";
+import { useShop } from "./ShopContext";
 
 const MobileBottomNav = () => {
   const pathname = usePathname();
+  const { cartCount } = useShop();
 
   const navItems = [
     {
@@ -22,12 +24,12 @@ const MobileBottomNav = () => {
     },
     {
       name: "Menu",
-      href: "/menu",
+      href: "/allproduct",
       icon: Grid2X2,
     },
     {
       name: "Search",
-      href: "/search",
+      href: "/allproduct",
       icon: Search,
     },
     {
@@ -125,7 +127,7 @@ const MobileBottomNav = () => {
 
           {/* Cart Count */}
           <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#20242d] px-1 text-[10px] font-bold text-white">
-            3
+            {cartCount}
           </span>
 
           {/* Cart Active Ring */}

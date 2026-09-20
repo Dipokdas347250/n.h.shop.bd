@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Search,
   Heart,
@@ -14,6 +15,7 @@ import {
   Zap,
 } from "lucide-react";
 import logo from "../../../public/images/logo.png";
+import { useShop } from "./ShopContext";
 
 const categories = [
   "Baby Item",
@@ -25,8 +27,20 @@ const categories = [
 ];
 
 const Navbar = () => {
+  const router = useRouter();
+  const { cartCount, wishlistCount } = useShop();
   const [mobileMenu, setMobileMenu] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const submitSearch = (event) => {
+    event.preventDefault();
+    const value = query.trim();
+    router.push(value ? `/allproduct?query=${encodeURIComponent(value)}` : "/allproduct");
+    setMobileMenu(false);
+  };
 
   return (
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
@@ -54,7 +68,7 @@ const Navbar = () => {
 
 
             {/* ================= SEARCH ================= */}
-            <div className="hidden md:flex flex-1 max-w-[520px]">
+            <form onSubmit={submitSearch} className="hidden md:flex flex-1 max-w-[520px]">
 
               <div className="w-full h-[45px] flex items-center border-2 border-[#16863D] rounded-md overflow-hidden">
 
@@ -69,6 +83,8 @@ const Navbar = () => {
                     text-gray-700
                     outline-none
                   "
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
                 />
 
                 <button
@@ -93,7 +109,7 @@ const Navbar = () => {
 
               </div>
 
-            </div>
+            </form>
 
 
             {/* ================= ORDER ================= */}
@@ -134,7 +150,7 @@ const Navbar = () => {
                   justify-center
                 "
               >
-                0
+                {wishlistCount}
               </span>
 
             </Link>
@@ -164,15 +180,16 @@ const Navbar = () => {
                   justify-center
                 "
               >
-                0
+                {cartCount}
               </span>
 
             </Link>
 
 
             {/* ================= LOGIN ================= */}
-            <Link
-              href="/login"
+            <button
+              type="button"
+              onClick={() => setLoginOpen(true)}
               className="
                 hidden sm:flex
                 h-[40px]
@@ -195,7 +212,7 @@ const Navbar = () => {
                 Login/Register
               </span>
 
-            </Link>
+            </button>
 
 
             {/* ================= MOBILE MENU ================= */}
@@ -291,7 +308,7 @@ const Navbar = () => {
                     {categories.map((category) => (
                       <Link
                         key={category}
-                        href="#"
+                        href={`/allproduct?query=${encodeURIComponent(category)}`}
                         className="
                           block
                           px-5
@@ -316,7 +333,7 @@ const Navbar = () => {
               {categories.slice(0, 5).map((category) => (
                 <Link
                   key={category}
-                  href="#"
+                  href={`/allproduct?query=${encodeURIComponent(category)}`}
                   className="
                     hidden lg:block
                     text-white
@@ -375,7 +392,7 @@ const Navbar = () => {
           {/* Mobile Search */}
           <div className="p-4">
 
-            <div
+            <form onSubmit={submitSearch}
               className="
                 h-[45px]
                 flex
@@ -396,13 +413,15 @@ const Navbar = () => {
                   text-sm
                   outline-none
                 "
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
               />
 
               <button className="px-4 bg-[#062B63] text-white">
                 <Search size={19} />
               </button>
 
-            </div>
+            </form>
 
           </div>
 
@@ -484,7 +503,7 @@ const Navbar = () => {
 
 
             <Link
-              href="/products"
+              href="/allproduct"
               onClick={() => setMobileMenu(false)}
               className="block px-5 py-3 border-b text-[#062B63]"
             >
@@ -493,7 +512,7 @@ const Navbar = () => {
 
 
             <Link
-              href="/trending"
+              href="/allproduct?sort=discount"
               onClick={() => setMobileMenu(false)}
               className="block px-5 py-3 border-b text-[#062B63]"
             >
@@ -556,9 +575,9 @@ const Navbar = () => {
             </Link>
 
 
-            <Link
-              href="/login"
-              onClick={() => setMobileMenu(false)}
+            <button
+              type="button"
+              onClick={() => { setLoginOpen(true); setMobileMenu(false); }}
               className="
                 block
                 mx-5
@@ -574,10 +593,29 @@ const Navbar = () => {
               "
             >
               Login / Register
-            </Link>
+            </button>
 
           </nav>
 
+        </div>
+      )}
+
+      {loginOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#062B63]/60 p-4" onClick={() => setLoginOpen(false)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-widest text-[#16863D]">Welcome back</p>
+                <h2 className="mt-1 text-2xl font-bold text-[#062B63]">Login or register</h2>
+              </div>
+              <button type="button" onClick={() => setLoginOpen(false)} aria-label="Close login dialog" className="text-gray-500 hover:text-[#062B63]"><X size={22} /></button>
+            </div>
+            <form onSubmit={(event) => { event.preventDefault(); setLoginOpen(false); }} className="mt-6 space-y-4">
+              <input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email address" className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-[#16863D]" />
+              <input type="password" required placeholder="Password" className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-[#16863D]" />
+              <button type="submit" className="w-full rounded-lg bg-[#062B63] px-4 py-3 font-semibold text-white transition hover:bg-[#041F4A]">Continue</button>
+            </form>
+          </div>
         </div>
       )}
 
