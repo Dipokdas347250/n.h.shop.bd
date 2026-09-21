@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useShop } from "../../app/common/ShopContext";
+import { normalizeProduct, storeRequest } from "../../lib/storeApi";
 
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -95,6 +96,17 @@ const products = [
 const TopSellingProducts = () => {
   const router = useRouter();
   const { addToCart, wishlist, toggleWishlist, cartCount } = useShop();
+  const [mounted, setMounted] = useState(false);
+  const [topProducts, setTopProducts] = useState([]);
+  const displayedProducts = topProducts.length ? topProducts : products;
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setMounted(true));
+    storeRequest("/mainproduct/top-selling")
+      .then((items) => setTopProducts((items || []).map(normalizeProduct)))
+      .catch(() => setTopProducts([]));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   // Add To Cart
   const handleAddToCart = (product) => {
@@ -263,7 +275,7 @@ const TopSellingProducts = () => {
 
         <div className="block md:hidden">
 
-          <Swiper
+          {mounted ? <Swiper
             modules={[Pagination, Autoplay]}
             spaceBetween={12}
             slidesPerView={2}
@@ -278,13 +290,13 @@ const TopSellingProducts = () => {
             className="top-selling-swiper !pb-10"
           >
 
-            {products.map((product) => (
+            {displayedProducts.map((product) => (
               <SwiperSlide key={product.id} className="h-auto">
                 <ProductCard product={product} />
               </SwiperSlide>
             ))}
 
-          </Swiper>
+          </Swiper> : <div className="grid grid-cols-2 gap-3">{products.slice(0, 2).map((product) => <ProductCard key={product.id} product={product} />)}</div>}
 
         </div>
 
@@ -294,7 +306,7 @@ const TopSellingProducts = () => {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
-          {products.map((product) => (
+          {displayedProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}

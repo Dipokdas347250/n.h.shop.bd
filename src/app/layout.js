@@ -5,6 +5,9 @@ import Footer from "./common/Footer";
 import MobileBottomNav from "./common/MobileBottomNav";
 import { ShopProvider } from "./common/ShopContext";
 import VisitTracker from "./common/VisitTracker";
+import { StoreCatalogProvider } from "./common/StoreCatalogContext";
+import { StoreAuthProvider } from "./common/StoreAuthContext";
+import MetaPixel from "./common/MetaPixel";
 
 
 
@@ -30,13 +33,18 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} ${nunito.variable}`}
       >
-        <ShopProvider>
-          <VisitTracker />
-          <Navber />
-          {children}
-          <MobileBottomNav />
-          <Footer />
-        </ShopProvider>
+        <StoreAuthProvider>
+          <MetaPixel />
+          <StoreCatalogProvider>
+            <ShopProvider>
+              <VisitTracker />
+              <Navber />
+              {children}
+              <MobileBottomNav />
+              <Footer />
+            </ShopProvider>
+          </StoreCatalogProvider>
+        </StoreAuthProvider>
 
       </body>
     </html>

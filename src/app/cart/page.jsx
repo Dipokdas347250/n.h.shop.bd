@@ -24,9 +24,9 @@ export default function CartPage() {
           <div className="mt-8 grid gap-6 md:grid-cols-[1.5fr_1fr]">
             <div className="space-y-3">
               {cart.map((item) => (
-                <div key={item.id} className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
-                  <div><p className="font-semibold">{item.name}</p><p className="text-blue-600">৳{item.price.toLocaleString()}</p></div>
-                  <div className="flex items-center gap-2"><button onClick={() => updateQuantity(item.id, (item.quantity || 1) - 1)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16} /></button><span>{item.quantity || 1}</span><button onClick={() => updateQuantity(item.id, (item.quantity || 1) + 1)} aria-label={`Increase ${item.name} quantity`}><Plus size={16} /></button><button onClick={() => removeFromCart(item.id)} aria-label={`Remove ${item.name}`} className="ml-2 text-red-500"><Trash2 size={17} /></button></div>
+                <div key={`${item.id}-${item.variant?._id || "default"}`} className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+                  <div><p className="font-semibold">{item.name}</p><p className="text-blue-600">৳{item.price.toLocaleString()}</p>{item.variant && <p className="text-xs text-gray-500">{item.variant.size} / {item.variant.color}</p>}</div>
+                  <div className="flex items-center gap-2"><button onClick={() => updateQuantity(item.id, (item.quantity || 1) - 1, item.variant)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16} /></button><span>{item.quantity || 1}</span><button onClick={() => updateQuantity(item.id, (item.quantity || 1) + 1, item.variant)} aria-label={`Increase ${item.name} quantity`}><Plus size={16} /></button><button onClick={() => removeFromCart(item.id, item.variant)} aria-label={`Remove ${item.name}`} className="ml-2 text-red-500"><Trash2 size={17} /></button></div>
                 </div>
               ))}
             </div>

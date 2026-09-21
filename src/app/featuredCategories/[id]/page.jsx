@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { notFound } from "next/navigation";
 import { ArrowLeft, ShoppingCart, Heart, Star, ShieldCheck, Truck } from "lucide-react";
 import { useShop } from "../../common/ShopContext";
+import { normalizeProduct, storeRequest } from "../../../lib/storeApi";
 
 const categories = [
   { id: "mens-fashion", name: "Men's Fashion", description: "Premium casual essentials and sharp everyday fits.", items: [
@@ -43,9 +44,24 @@ export default function FeaturedCategoryPage() {
   const router = useRouter();
   const { addToCart: addProduct, wishlist, toggleWishlist } = useShop();
   const id = params?.id;
-  const category = categories.find((item) => item.id === id);
+  const [liveCategory, setLiveCategory] = useState(null);
+  const category = liveCategory || categories.find((item) => item.id === id);
 
-  if (!category) notFound();
+  useEffect(() => {
+    if (!id) return;
+    storeRequest(`/mainproduct/category/${id}`)
+      .then((data) => setLiveCategory({
+        ...data.category,
+        id: data.category.slug,
+        description: `Explore products in ${data.category.name}.`,
+        items: (data.products || []).map(normalizeProduct),
+      }))
+      .catch(() => {});
+  }, [id]);
+
+  if (!category) {
+    return <main className="p-10 text-center text-gray-500">Loading category...</main>;
+  }
 
   const addToCart = (product) => {
     addProduct(product);

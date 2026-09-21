@@ -15,6 +15,8 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { useShop } from "../../app/common/ShopContext";
+import { useStoreCatalog } from "../../app/common/StoreCatalogContext";
+import { storeRequest } from "../../lib/storeApi";
 
 const products = [
   {
@@ -164,19 +166,34 @@ const categories = [
 
 const AllProducts = ({ initialSearch = "" }) => {
   const router = useRouter();
+  const { products, loading } = useStoreCatalog();
   const [search, setSearch] = useState(initialSearch);
   const [category, setCategory] = useState("All");
   const [sort, setSort] = useState("default");
+  const [categoryOptions, setCategoryOptions] = useState(categories);
   const { cart, wishlist, addToCart, toggleWishlist } = useShop();
+
+  React.useEffect(() => {
+    storeRequest("/products/allCategory")
+      .then((items) => {
+        if (Array.isArray(items) && items.length) {
+          setCategoryOptions(["All", ...items.map((item) => item.name).filter(Boolean)]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
-      const matchSearch = product.name
-        .toLowerCase()
-        .includes(search.toLowerCase()) || product.category.toLowerCase().includes(search.toLowerCase());
+      const productName = String(product.name ?? "");
+      const productCategory = String(product.category ?? "");
+      const searchTerm = search.toLowerCase();
+      const matchSearch =
+        productName.toLowerCase().includes(searchTerm) ||
+        productCategory.toLowerCase().includes(searchTerm);
 
       const matchCategory =
-        category === "All" || product.category === category;
+        category === "All" || productCategory === category;
 
       return matchSearch && matchCategory;
     });
@@ -198,7 +215,7 @@ const AllProducts = ({ initialSearch = "" }) => {
     }
 
     return result;
-  }, [search, category, sort]);
+  }, [products, search, category, sort]);
 
   const buyNow = (product) => {
     addToCart(product);
@@ -224,6 +241,8 @@ const AllProducts = ({ initialSearch = "" }) => {
             Explore our complete collection of premium products.
           </p>
         </div>
+
+        {loading && <p className="mb-8 text-center text-gray-500">Loading products...</p>}
 
         {/* Search + Sort */}
         <div className="flex flex-col lg:flex-row gap-4 mb-8">
@@ -267,7 +286,7 @@ const AllProducts = ({ initialSearch = "" }) => {
 
         {/* Categories */}
         <div className="flex gap-3 overflow-x-auto pb-4 mb-8 scrollbar-hide">
-          {categories.map((item) => (
+          {categoryOptions.map((item) => (
             <button
               key={item}
               onClick={() => setCategory(item)}
@@ -347,9 +366,13 @@ const AllProducts = ({ initialSearch = "" }) => {
                 {/* Details */}
                 <div className="p-5">
 
-                  <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">
-                    {product.category}
-                  </p>
+                  {product.categorySlug ? (
+                    <Link href={`/featuredCategories/${product.categorySlug}`} className="mb-2 block text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">
+                      {product.category}
+                    </Link>
+                  ) : (
+                    <p className="mb-2 text-xs font-semibold text-blue-600 dark:text-blue-400">{product.category}</p>
+                  )}
 
                   <Link href={`/allproduct/${product.id}`}>
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1 hover:text-blue-600 transition">

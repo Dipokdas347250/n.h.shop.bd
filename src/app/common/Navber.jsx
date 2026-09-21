@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import logo from "../../../public/images/logo.png";
 import { useShop } from "./ShopContext";
+import { useStoreAuth } from "./StoreAuthContext";
 
 const categories = [
   "Baby Item",
@@ -29,11 +30,14 @@ const categories = [
 const Navbar = () => {
   const router = useRouter();
   const { cartCount, wishlistCount } = useShop();
+  const { user, login, logout } = useStoreAuth();
   const [mobileMenu, setMobileMenu] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [loginOpen, setLoginOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
 
   const submitSearch = (event) => {
     event.preventDefault();
@@ -209,7 +213,7 @@ const Navbar = () => {
               <UserRound size={17} />
 
               <span>
-                Login/Register
+                {user ? user.fullname : "Login/Register"}
               </span>
 
             </button>
@@ -610,11 +614,12 @@ const Navbar = () => {
               </div>
               <button type="button" onClick={() => setLoginOpen(false)} aria-label="Close login dialog" className="text-gray-500 hover:text-[#062B63]"><X size={22} /></button>
             </div>
-            <form onSubmit={(event) => { event.preventDefault(); setLoginOpen(false); }} className="mt-6 space-y-4">
+            {user ? <div className="mt-6 space-y-4"><p className="text-gray-600">Signed in as {user.email}</p><button type="button" onClick={async () => { await logout(); setLoginOpen(false); }} className="w-full rounded-lg bg-red-500 px-4 py-3 font-semibold text-white">Logout</button></div> : <form onSubmit={async (event) => { event.preventDefault(); setAuthError(""); try { await login({ email, password }); setLoginOpen(false); } catch (error) { setAuthError(error.message); } }} className="mt-6 space-y-4">
               <input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email address" className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-[#16863D]" />
-              <input type="password" required placeholder="Password" className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-[#16863D]" />
+              <input type="password" required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Password" className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-[#16863D]" />
+              {authError && <p className="text-sm text-red-500">{authError}</p>}
               <button type="submit" className="w-full rounded-lg bg-[#062B63] px-4 py-3 font-semibold text-white transition hover:bg-[#041F4A]">Continue</button>
-            </form>
+            </form>}
           </div>
         </div>
       )}

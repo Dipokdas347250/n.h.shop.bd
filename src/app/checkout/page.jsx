@@ -2,32 +2,25 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, CheckCircle2, ShoppingBag } from "lucide-react";
 import { useShop } from "../common/ShopContext";
-
-const products = [
-  { id: 1, name: "Premium Wireless Headphone", price: 2499, image: "/images/image.jpg" },
-  { id: 2, name: "Men's Premium Casual Shirt", price: 1199, image: "/images/image.jpg" },
-  { id: 3, name: "Smart Watch Series 8", price: 3299, image: "/images/image.jpg" },
-  { id: 4, name: "Women's Stylish Handbag", price: 1499, image: "/images/image.jpg" },
-  { id: 5, name: "Running Sports Shoes", price: 1899, image: "/images/image.jpg" },
-  { id: 6, name: "Premium Skin Care Set", price: 999, image: "/images/image.jpg" },
-  { id: 7, name: "Men's Premium Sneakers", price: 2299, image: "/images/image.jpg" },
-  { id: 8, name: "Bluetooth Portable Speaker", price: 1599, image: "/images/image.jpg" },
-  { id: 9, name: "Women's Summer Dress", price: 1399, image: "/images/image.jpg" },
-  { id: 10, name: "Modern LED Table Lamp", price: 899, image: "/images/image.jpg" },
-  { id: 11, name: "Smartphone Fast Charger", price: 699, image: "/images/image.jpg" },
-  { id: 12, name: "Premium Men's Watch", price: 1999, image: "/images/image.jpg" },
-];
+import { storeRequest } from "../../lib/storeApi";
+import { useStoreCatalog } from "../common/StoreCatalogContext";
+import { useStoreAuth } from "../common/StoreAuthContext";
+import { trackMetaEvent } from "../../lib/metaPixel";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
-  const { cart } = useShop();
+  const { cart, removeFromCart } = useShop();
+  const { products } = useStoreCatalog();
+  const { user } = useStoreAuth();
+  const [form, setForm] = useState({ phone: "", address: "", city: "", district: "", postcode: "", paymentMethod: "cashOnDelivery" });
+  const [status, setStatus] = useState("");
 
-  const selectedProductId = useMemo(() => {
+    const selectedProductId = useMemo(() => {
     const value = searchParams.get("product");
-    return value ? Number(value) : null;
+    return value || null;
   }, [searchParams]);
 
   const items = useMemo(() => {
@@ -35,9 +28,35 @@ function CheckoutContent() {
     return selected && !cart.some((item) => item.id === selectedProductId)
       ? [{ ...selected, quantity: 1 }, ...cart]
       : cart;
-  }, [cart, selectedProductId]);
+  }, [cart, products, selectedProductId]);
 
   const total = items.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
+  const checkoutContentIds = useMemo(() => items.map((item) => String(item.id)), [items]);
+
+  useEffect(() => {
+    if (checkoutContentIds.length) trackMetaEvent("InitiateCheckout", { content_ids: checkoutContentIds, num_items: checkoutContentIds.length, value: total, currency: "BDT" });
+  }, [checkoutContentIds, total]);
+
+  const placeOrder = async (event) => {
+    event.preventDefault();
+    setStatus("Placing order...");
+    try {
+      const order = await storeRequest("/checkout/checkout_order", {
+        method: "POST",
+        body: JSON.stringify({
+          user: user?._id,
+          paymentMethod: form.paymentMethod,
+          shipping: { phone: form.phone, address: form.address, city: form.city, district: form.district, postcode: form.postcode },
+          items: items.map((item) => ({ product: item.id, variant: item.variant?._id, quantity: item.quantity || 1 })),
+        }),
+      });
+      trackMetaEvent("Purchase", { content_ids: checkoutContentIds, num_items: checkoutContentIds.length, value: total, currency: "BDT", order_id: order?._id || order?.transaction_id });
+      items.forEach((item) => removeFromCart(item.id));
+      setStatus("Order placed successfully.");
+    } catch (error) {
+      setStatus(error.message);
+    }
+  };
 
   return (
     <main className="bg-gray-50 py-10 text-gray-900 dark:bg-gray-950 dark:text-white">
@@ -95,9 +114,16 @@ function CheckoutContent() {
                 </div>
               </div>
 
-              <button className="mt-6 w-full rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700">
-                Place Order
-              </button>
+              <form onSubmit={placeOrder} className="mt-6 space-y-3">
+                {!user && <p className="rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">Please login before placing an order.</p>}
+                <input required value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} placeholder="Phone" className="w-full rounded-lg border p-3" />
+                <input required value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} placeholder="Address" className="w-full rounded-lg border p-3" />
+                <div className="grid grid-cols-2 gap-2"><input required value={form.city} onChange={(event) => setForm({ ...form, city: event.target.value })} placeholder="City" className="w-full rounded-lg border p-3" /><input required value={form.district} onChange={(event) => setForm({ ...form, district: event.target.value })} placeholder="District" className="w-full rounded-lg border p-3" /></div>
+                <input value={form.postcode} onChange={(event) => setForm({ ...form, postcode: event.target.value })} placeholder="Postcode" className="w-full rounded-lg border p-3" />
+                <select value={form.paymentMethod} onChange={(event) => { const paymentMethod = event.target.value; setForm({ ...form, paymentMethod }); trackMetaEvent("AddPaymentInfo", { payment_method: paymentMethod, value: total, currency: "BDT" }); }} className="w-full rounded-lg border p-3"><option value="cashOnDelivery">Cash on delivery</option><option value="online">Online payment</option></select>
+                <button disabled={!items.length || !user} className="w-full rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50">Place Order</button>
+                {status && <p className="text-sm text-gray-600">{status}</p>}
+              </form>
             </div>
           </div>
         </div>

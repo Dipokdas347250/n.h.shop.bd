@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,6 +22,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import image from "../../../public/images/image.jpg";
+import { storeRequest } from "../../lib/storeApi";
 
 const categories = [
   {
@@ -83,6 +84,30 @@ const categories = [
 ];
 
 const FeaturedCategories = () => {
+  const [liveCategories, setLiveCategories] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setMounted(true));
+    storeRequest("/products/allCategory")
+      .then((items) => {
+        if (items?.length) {
+          setLiveCategories(items.map((item) => ({
+            id: item._id,
+            name: item.name,
+            slug: item.slug,
+            items: `${item.subcategories?.length || 0} Products`,
+            image: item.image || image,
+            link: `/featuredCategories/${item.slug}`,
+          })));
+        }
+      })
+      .catch(() => {});
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  const displayedCategories = liveCategories || categories;
+
   return (
     <section className="py-16 bg-white dark:bg-black transition-colors duration-300">
       <div className="container mx-auto px-4">
@@ -111,7 +136,7 @@ const FeaturedCategories = () => {
 
         {/* Slider */}
         <div className="relative px-2 md:px-5">
-          <Swiper
+          {mounted ? <Swiper
             modules={[Autoplay, Navigation, Pagination]}
             spaceBetween={16}
             slidesPerView={2}
@@ -147,7 +172,7 @@ const FeaturedCategories = () => {
             }}
             className="featured-category-swiper"
           >
-            {categories.map((category) => (
+            {displayedCategories.map((category) => (
               <SwiperSlide key={category.id}>
                 <Link
                   href={category.link}
@@ -188,7 +213,7 @@ const FeaturedCategories = () => {
                 </Link>
               </SwiperSlide>
             ))}
-          </Swiper>
+          </Swiper> : <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">{displayedCategories.slice(0, 4).map((category) => <Link key={category.id} href={category.link} className="group block"><div className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-900"><Image src={category.image} alt={category.name} fill sizes="25vw" className="object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" /><div className="absolute bottom-0 p-3"><h3 className="text-sm font-bold text-white">{category.name}</h3><p className="mt-1 text-xs text-white/75">{category.items}</p></div></div></Link>)}</div>}
 
           {/* Previous */}
           <button

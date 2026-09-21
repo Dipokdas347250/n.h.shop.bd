@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import image from "../../../public/images/image.jpg";
@@ -14,6 +14,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css/effect-fade";
+import { storeRequest } from "../../lib/storeApi";
 
 const slides = [
   {
@@ -73,10 +74,35 @@ const slides = [
 ];
 
 const Banner = () => {
+  const [liveSlides, setLiveSlides] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setMounted(true));
+    storeRequest("/banner/all-banner")
+      .then((banners) => {
+        if (banners?.length) {
+          setLiveSlides(banners.map((banner) => ({
+            id: banner._id,
+            image: banner.image,
+            title: "Discover something new",
+            subtitle: "N H SHOP",
+            description: "Quality products and thoughtful offers delivered across Bangladesh.",
+            button: "Shop now",
+            link: banner.url || "/allproduct",
+          })));
+        }
+      })
+      .catch(() => {});
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  const displayedSlides = liveSlides || slides;
+
   return (
     <section className="w-full bg-white">
       <div className="relative w-full overflow-hidden">
-        <Swiper
+        {mounted ? <Swiper
           modules={[Autoplay, Pagination, Navigation, EffectFade]}
           effect="fade"
           fadeEffect={{
@@ -98,7 +124,7 @@ const Banner = () => {
           }}
           className="nh-banner"
         >
-          {slides.map((slide, index) => (
+          {displayedSlides.map((slide, index) => (
             <SwiperSlide key={slide.id}>
               <div className="relative w-full h-[300px] sm:h-[380px] md:h-[480px] lg:h-[560px]">
                 {/* ================= IMAGE ================= */}
@@ -156,7 +182,7 @@ const Banner = () => {
               </div>
             </SwiperSlide>
           ))}
-        </Swiper>
+        </Swiper> : <div className="relative w-full overflow-hidden"><BannerSlide slide={displayedSlides[0]} priority /></div>}
 
         {/* ================= PREVIOUS ================= */}
         <button
@@ -212,5 +238,13 @@ const Banner = () => {
     </section>
   );
 };
+
+function BannerSlide({ slide, priority = false }) {
+  return <div className="relative w-full h-[300px] sm:h-[380px] md:h-[480px] lg:h-[560px]">
+    <Image src={slide.image} alt={slide.title} fill priority={priority} sizes="100vw" className="object-cover" />
+    <div className="absolute inset-0 bg-gradient-to-r from-[#062B63]/90 via-[#062B63]/45 to-transparent" />
+    <div className="relative z-10 flex h-full max-w-[1500px] items-center px-5 sm:px-8 md:px-12 lg:px-16"><div className="max-w-[600px] text-white"><p className="text-[#8BE28F] text-xs font-bold tracking-[2px] sm:text-sm md:text-base">{slide.subtitle}</p><h1 className="mt-3 text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl lg:text-6xl">{slide.title}</h1><p className="mt-3 max-w-[530px] text-sm leading-6 text-white/90 sm:text-base md:mt-5 md:text-lg md:leading-8">{slide.description}</p><Link href={slide.link} className="mt-5 inline-flex items-center gap-2 rounded-md bg-[#16863D] px-5 py-3 text-sm font-semibold text-white md:mt-7 sm:px-7 sm:text-base">{slide.button}<ArrowRight size={18} /></Link></div></div>
+  </div>;
+}
 
 export default Banner;

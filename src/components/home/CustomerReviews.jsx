@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { storeRequest } from "../../lib/storeApi";
 
 const reviews = [
   {
@@ -63,8 +64,24 @@ const reviews = [
 
 const CustomerReviews = () => {
   const [current, setCurrent] = useState(0);
+  const [liveReviews, setLiveReviews] = useState([]);
 
-  const totalSlides = reviews.length;
+  useEffect(() => {
+    storeRequest("/review/all")
+      .then((items) => setLiveReviews((items || []).map((item) => ({
+        id: item._id,
+        name: item.user?.fullname || "Verified Customer",
+        role: item.product?.title || "Verified Customer",
+        image: item.user?.photo || "/images/image.jpg",
+        rating: item.rating,
+        review: item.comment,
+      }))))
+      .catch(() => {});
+  }, []);
+
+  const displayedReviews = liveReviews.length ? liveReviews : reviews;
+
+  const totalSlides = displayedReviews.length;
 
   // Auto Slider
   useEffect(() => {
@@ -111,7 +128,7 @@ const CustomerReviews = () => {
                 transform: `translateX(-${current * 100}%)`,
               }}
             >
-              {reviews.map((item) => (
+              {displayedReviews.map((item) => (
                 <div key={item.id} className="min-w-full px-2 md:px-10">
                   <div className="relative bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-7 md:p-10">
                     {/* Quote Icon */}
@@ -190,7 +207,7 @@ const CustomerReviews = () => {
 
         {/* Dots */}
         <div className="flex justify-center items-center gap-2 mt-8">
-          {reviews.map((_, index) => (
+          {displayedReviews.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrent(index)}
