@@ -8,6 +8,7 @@ import VisitTracker from "./common/VisitTracker";
 import { StoreCatalogProvider } from "./common/StoreCatalogContext";
 import { StoreAuthProvider } from "./common/StoreAuthContext";
 import MetaPixel from "./common/MetaPixel";
+import VideoSection from "@/components/home/VideoSection";
 
 
 
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
               <Navber />
               {children}
               <MobileBottomNav />
+              <VideoSection />
               <Footer />
             </ShopProvider>
           </StoreCatalogProvider>

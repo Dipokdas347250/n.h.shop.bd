@@ -229,7 +229,7 @@ const AllProducts = ({ initialSearch = "" }) => {
 
         {/* Page Header */}
         <div className="text-center mb-10">
-          <p className="text-sm uppercase tracking-widest font-semibold text-blue-600 dark:text-blue-400">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#16863D] dark:text-emerald-400">
             Shop Everything
           </p>
 
@@ -259,7 +259,7 @@ const AllProducts = ({ initialSearch = "" }) => {
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-xl border border-gray-200 bg-white py-3.5 pl-12 pr-4 text-gray-900 outline-none focus:ring-2 focus:ring-[#16863D] dark:border-gray-800 dark:bg-gray-900 dark:text-white"
             />
           </div>
 
@@ -292,8 +292,8 @@ const AllProducts = ({ initialSearch = "" }) => {
               onClick={() => setCategory(item)}
               className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition ${
                 category === item
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:border-blue-500"
+                  ? "bg-[#062B63] text-white"
+                  : "border border-gray-200 bg-white text-gray-700 hover:border-[#16863D] dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
               }`}
             >
               {item}
@@ -314,7 +314,7 @@ const AllProducts = ({ initialSearch = "" }) => {
           {cart.length > 0 && (
             <Link
               href="/cart"
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="flex items-center gap-2 rounded-lg bg-[#16863D] px-4 py-2 font-semibold text-white transition hover:bg-[#0f6d31]"
             >
               <ShoppingCart size={17} />
               Cart ({cart.length})
@@ -367,15 +367,15 @@ const AllProducts = ({ initialSearch = "" }) => {
                 <div className="p-5">
 
                   {product.categorySlug ? (
-                    <Link href={`/featuredCategories/${product.categorySlug}`} className="mb-2 block text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">
+                    <Link href={`/featuredCategories/${product.categorySlug}`} className="mb-2 block text-xs font-semibold text-[#16863D] hover:underline dark:text-emerald-400">
                       {product.category}
                     </Link>
                   ) : (
-                    <p className="mb-2 text-xs font-semibold text-blue-600 dark:text-blue-400">{product.category}</p>
+                    <p className="mb-2 text-xs font-semibold text-[#16863D] dark:text-emerald-400">{product.category}</p>
                   )}
 
                   <Link href={`/allproduct/${product.id}`}>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1 hover:text-blue-600 transition">
+                    <h2 className="line-clamp-1 text-lg font-semibold text-gray-900 transition hover:text-[#16863D] dark:text-white">
                       {product.name}
                     </h2>
                   </Link>
@@ -399,7 +399,7 @@ const AllProducts = ({ initialSearch = "" }) => {
 
                   {/* Price */}
                   <div className="flex items-center gap-3 mt-4">
-                    <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    <span className="text-2xl font-bold text-[#062B63] dark:text-blue-300">
                       ৳{product.price.toLocaleString()}
                     </span>
 
@@ -409,17 +409,21 @@ const AllProducts = ({ initialSearch = "" }) => {
                   </div>
 
                   {/* Offer */}
-                  <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 font-semibold mt-2">
+                  <div className="mt-2 flex items-center gap-1 text-xs font-semibold text-[#16863D] dark:text-green-400">
                     <Zap size={14} className="fill-current" />
-                    Limited Time Offer
+                    {product.offer}
                   </div>
+
+                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-500 dark:text-gray-400">
+                    {product.description}
+                  </p>
 
                   {/* Buttons */}
                   <div className="grid grid-cols-2 gap-2 mt-5">
 
                     <button
                       onClick={() => addToCart(product)}
-                      className="flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold text-sm hover:bg-blue-600 hover:text-white transition"
+                      className="flex items-center justify-center gap-2 rounded-xl border-2 border-[#062B63] py-3 text-sm font-semibold text-[#062B63] transition hover:bg-[#062B63] hover:text-white dark:border-blue-300 dark:text-blue-300"
                     >
                       <ShoppingCart size={17} />
                       Add Cart
@@ -427,7 +431,7 @@ const AllProducts = ({ initialSearch = "" }) => {
 
                     <button
                       onClick={() => buyNow(product)}
-                      className="flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition"
+                      className="flex items-center justify-center gap-2 rounded-xl bg-[#16863D] py-3 text-sm font-semibold text-white transition hover:bg-[#0f6d31]"
                     >
                       <Zap size={17} />
                       Order Now

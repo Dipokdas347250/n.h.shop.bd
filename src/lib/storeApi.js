@@ -19,24 +19,32 @@ export async function storeRequest(path, options = {}) {
 }
 
 export function normalizeProduct(product) {
-  const price = Number(product.price || 0);
-  const salePrice = Number(product.diccountprice || product.discountPrice || price);
-  const discount = price && salePrice < price ? Math.round(((price - salePrice) / price) * 100) : 0;
+  const originalPrice = Number(product.price ?? 0);
+  const salePriceValue = product.discountPrice ?? product.diccountprice ?? originalPrice;
+  const parsedSalePrice = Number(salePriceValue);
+  const salePrice = Number.isFinite(parsedSalePrice) && parsedSalePrice >= 0 ? parsedSalePrice : originalPrice;
+  const price = Math.max(originalPrice, salePrice);
+  const discount = price > 0 && salePrice < price ? Math.round(((price - salePrice) / price) * 100) : 0;
+  const title = String(product.title || product.name || "Unnamed product").trim();
+  const description = String(product.description || "Quality products from N H Shop.").trim();
+  const offer = String(product.offer || product.offerText || (discount > 0 ? `${discount}% OFF` : "Special offer")).trim();
   return {
     ...product,
-    id: product._id,
-    name: product.title,
+    id: product._id || product.id,
+    name: title,
+    title,
     category: product.category?.name || product.category || "General",
     categorySlug: product.category?.slug || "",
     image: product.image?.[0] || "/images/image.jpg",
     price: salePrice,
     oldPrice: price,
     discount,
+    offer,
     rating: product.rating || 0,
     reviews: product.review?.length || 0,
     reviewItems: product.review || [],
     variants: product.variant || [],
-    description: product.description || "Quality products from N H Shop.",
+    description,
     features: product.features || [],
   };
 }

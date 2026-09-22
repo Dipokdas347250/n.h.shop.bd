@@ -212,8 +212,12 @@ const TopSellingProducts = () => {
           {/* Offer */}
           <div className="mt-1.5 flex items-center gap-1 text-[9px] font-medium text-green-600 dark:text-green-400 sm:mt-2 sm:text-xs">
             <Zap size={12} className="fill-current sm:h-[14px] sm:w-[14px]" />
-            Limited Time Offer
+            {product.offer}
           </div>
+
+          <p className="mt-2 line-clamp-2 text-xs leading-5 text-gray-500 dark:text-gray-400 sm:text-sm">
+            {product.description}
+          </p>
 
           {/* Buttons */}
           <div className="mt-3 grid grid-cols-1 gap-1.5 sm:mt-5 sm:grid-cols-2 sm:gap-2">
@@ -261,10 +265,10 @@ const TopSellingProducts = () => {
           </div>
 
           <Link
-            href="/shop"
-            className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
+            href="/allproduct"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-[#16863D] px-5 py-2.5 font-semibold text-[#062B63] transition hover:bg-[#16863D] hover:text-white dark:text-white"
           >
-            View All Products →
+            View All Products <span aria-hidden="true">→</span>
           </Link>
 
         </div>

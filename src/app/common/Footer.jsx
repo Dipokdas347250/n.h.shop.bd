@@ -155,7 +155,7 @@ const Footer = () => {
 
               <li>
                 <Link
-                  href="/shop"
+                  href="/allproduct"
                   className="transition hover:text-blue-600"
                 >
                   Shop
