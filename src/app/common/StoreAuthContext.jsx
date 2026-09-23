@@ -1,10 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { storeRequest } from "../../lib/storeApi";
 
 const StoreAuthContext = createContext(null);
 
+/**
+ * Tracks the signed-in customer. Signing in is entirely optional: the
+ * storefront works, and orders can be placed, with `user` left as null.
+ */
 export function StoreAuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,21 +20,50 @@ export function StoreAuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = async (credentials) => {
+  const login = useCallback(async (credentials) => {
     const nextUser = await storeRequest("/auth/login", {
       method: "POST",
       body: JSON.stringify(credentials),
     });
     setUser(nextUser);
     return nextUser;
-  };
+  }, []);
 
-  const logout = async () => {
-    await storeRequest("/auth/logout", { method: "POST" });
-    setUser(null);
-  };
+  const register = useCallback(
+    (details) => storeRequest("/auth/signup", { method: "POST", body: JSON.stringify(details) }),
+    []
+  );
 
-  return <StoreAuthContext.Provider value={{ user, loading, login, logout }}>{children}</StoreAuthContext.Provider>;
+  const verifyOtp = useCallback(
+    (details) => storeRequest("/auth/verifyotp", { method: "POST", body: JSON.stringify(details) }),
+    []
+  );
+
+  const resendOtp = useCallback(
+    (email) => storeRequest("/auth/resendotp", { method: "POST", body: JSON.stringify({ email }) }),
+    []
+  );
+
+  const updateProfile = useCallback(async (details) => {
+    const nextUser = await storeRequest("/auth/profile", { method: "PATCH", body: JSON.stringify(details) });
+    setUser(nextUser);
+    return nextUser;
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await storeRequest("/auth/logout", { method: "POST" });
+    } finally {
+      setUser(null);
+    }
+  }, []);
+
+  const value = useMemo(
+    () => ({ user, loading, login, register, verifyOtp, resendOtp, updateProfile, logout }),
+    [user, loading, login, register, verifyOtp, resendOtp, updateProfile, logout]
+  );
+
+  return <StoreAuthContext.Provider value={value}>{children}</StoreAuthContext.Provider>;
 }
 
 export function useStoreAuth() {

@@ -5,27 +5,40 @@
   --secondary: #16863D;
   --tertiary: #546375;
   --white: #ffffff;
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-tertiary: var(--tertiary);
-  --color-white: var(--white);
-  --font-nunito: "Nunito", sans-serif;
-  --font-inter: "Inter", monospace;
-
 }
 
-@theme inline {
-  --color-primary: var(--color-primary);
-  --color-secondary: var(--color-secondary);
-  --color-tertiary: var(--color-tertiary);
-  --color-white: var(--color-white);
-}
 @theme {
-  --font-nunito: "Nunito", sans-serif;
-  --font-inter: "Inter", monospace;
-}
-/* Top Selling Products Swiper */
+  --color-primary: #062B63;
+  --color-primary-dark: #041F4A;
+  --color-secondary: #16863D;
+  --color-secondary-dark: #0f6d30;
+  --color-tertiary: #546375;
 
+  /* Hind Siliguri carries the Bangla glyphs; Inter handles Latin text. */
+  --font-sans: var(--font-inter), var(--font-bangla), system-ui, sans-serif;
+  --font-nunito: var(--font-nunito), var(--font-bangla), sans-serif;
+  --font-bangla: var(--font-bangla), sans-serif;
+}
+
+html:lang(bn) body {
+  font-family: var(--font-bangla), var(--font-inter), system-ui, sans-serif;
+}
+
+body {
+  background: #ffffff;
+}
+
+/* Hide the scrollbar on the horizontal category strips. */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Top Selling Products swiper */
 .top-selling-swiper .swiper-pagination {
   bottom: 0 !important;
 }

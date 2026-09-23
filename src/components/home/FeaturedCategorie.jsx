@@ -1,241 +1,125 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Autoplay,
-  Navigation,
-  Pagination,
-} from "swiper/modules";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import fallbackImage from "../../../public/images/image.jpg";
+import { useStoreCatalog } from "../../app/common/StoreCatalogContext";
+import { useLanguage } from "../../app/common/LanguageContext";
+import { useHasMounted } from "../../app/common/useHasMounted";
+import SectionHeader from "../common/SectionHeader";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-import image from "../../../public/images/image.jpg";
-import { storeRequest } from "../../lib/storeApi";
-
-const categories = [
-  {
-    id: 1,
-    name: "Men's Fashion",
-    slug: "mens-fashion",
-    items: "120+ Products",
-    image: image,
-    link: "/featuredCategories/mens-fashion",
-  },
-  {
-    id: 2,
-    name: "Women's Fashion",
-    slug: "womens-fashion",
-    items: "180+ Products",
-    image: image,
-    link: "/featuredCategories/womens-fashion",
-  },
-  {
-    id: 3,
-    name: "Electronics",
-    slug: "electronics",
-    items: "95+ Products",
-    image: image,
-    link: "/featuredCategories/electronics",
-  },
-  {
-    id: 4,
-    name: "Shoes",
-    slug: "shoes",
-    items: "75+ Products",
-    image: image,
-    link: "/featuredCategories/shoes",
-  },
-  {
-    id: 5,
-    name: "Beauty",
-    slug: "beauty",
-    items: "90+ Products",
-    image: image,
-    link: "/featuredCategories/beauty",
-  },
-  {
-    id: 6,
-    name: "Home & Living",
-    slug: "home-living",
-    items: "110+ Products",
-    image: image,
-    link: "/featuredCategories/home-living",
-  },
-  {
-    id: 7,
-    name: "Accessories",
-    slug: "accessories",
-    items: "60+ Products",
-    image: image,
-    link: "/featuredCategories/accessories",
-  },
-];
-
 const FeaturedCategories = () => {
-  const [liveCategories, setLiveCategories] = useState(null);
-  const [mounted, setMounted] = useState(false);
+  const { t, formatNumber } = useLanguage();
+  const { categories, products, loading } = useStoreCatalog();
+  const mounted = useHasMounted();
 
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setMounted(true));
-    storeRequest("/products/allCategory")
-      .then((items) => {
-        if (items?.length) {
-          setLiveCategories(items.map((item) => ({
-            id: item._id,
-            name: item.name,
-            slug: item.slug,
-            items: `${item.subcategories?.length || 0} Products`,
-            image: item.image || image,
-            link: `/featuredCategories/${item.slug}`,
-          })));
-        }
-      })
-      .catch(() => {});
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
+  // Count real products per category rather than showing a placeholder number.
+  const tiles = categories.map((category) => ({
+    id: category._id,
+    name: category.name,
+    href: `/featuredCategories/${category.slug}`,
+    image: category.image || fallbackImage,
+    count: products.filter((product) => product.categorySlug === category.slug).length,
+  }));
 
-  const displayedCategories = liveCategories || categories;
+  if (!loading && !tiles.length) return null;
+
+  const Tile = ({ tile }) => (
+    <Link href={tile.href} className="group block">
+      <div className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl">
+        <Image
+          src={tile.image}
+          alt={tile.name}
+          fill
+          sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 16.66vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+          <h3 className="text-sm font-bold text-white md:text-lg">{tile.name}</h3>
+          <p className="mt-1 text-xs text-white/75 md:text-sm">{t("home.itemsCount", { count: formatNumber(tile.count) })}</p>
+        </div>
+        <div className="absolute right-3 top-3 flex h-9 w-9 translate-y-2 items-center justify-center rounded-full bg-white/90 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <ArrowRight size={17} className="text-gray-900" />
+        </div>
+      </div>
+    </Link>
+  );
 
   return (
-    <section className="py-16 bg-white dark:bg-black transition-colors duration-300">
+    <section className="bg-white py-16">
       <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2">
-              Explore Our Store
-            </p>
+        <SectionHeader
+          eyebrow={t("home.featuredEyebrow")}
+          title={t("home.featuredTitle")}
+          actionLabel={t("common.viewAll")}
+          actionHref="/allproduct"
+        />
 
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Featured Categories
-            </h2>
-
-           
-          </div>
-
-          <Link
-            href="/allproduct"
-            className="inline-flex items-center gap-2 font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
-            View All
-            <ArrowRight size={18} />
-          </Link>
-        </div>
-
-        {/* Slider */}
-        <div className="relative px-2 md:px-5">
-          {mounted ? <Swiper
-            modules={[Autoplay, Navigation, Pagination]}
-            spaceBetween={16}
-            slidesPerView={2}
-            slidesPerGroup={1}
-            rewind={true}
-            speed={700}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            navigation={{
-              prevEl: ".category-prev",
-              nextEl: ".category-next",
-            }}
-            pagination={{
-              el: ".category-pagination",
-              clickable: true,
-            }}
-            breakpoints={{
-              640: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 4,
-                spaceBetween: 20,
-              },
-              1280: {
-                slidesPerView: 6,
-                spaceBetween: 24,
-              },
-            }}
-            className="featured-category-swiper"
-          >
-            {displayedCategories.map((category) => (
-              <SwiperSlide key={category.id}>
-                <Link
-                  href={category.link}
-                  className="group block"
-                >
-                  <div className="relative overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-900 aspect-square shadow-sm hover:shadow-xl transition-all duration-300">
-                    {/* Image */}
-                    <Image
-                      src={category.image}
-                      alt={category.name}
-                      fill
-                      sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 16.66vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-
-                    {/* Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
-                      <h3 className="text-white font-bold text-sm md:text-lg">
-                        {category.name}
-                      </h3>
-
-                      <p className="text-white/75 text-xs md:text-sm mt-1">
-                        {category.items}
-                      </p>
-                    </div>
-
-                    {/* Arrow */}
-                    <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 dark:bg-black/80 flex items-center justify-center opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                      <ArrowRight
-                        size={17}
-                        className="text-gray-900 dark:text-white"
-                      />
-                    </div>
-                  </div>
-                </Link>
-              </SwiperSlide>
+        {loading ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="aspect-square animate-pulse rounded-2xl bg-gray-100" />
             ))}
-          </Swiper> : <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">{displayedCategories.slice(0, 4).map((category) => <Link key={category.id} href={category.link} className="group block"><div className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-900"><Image src={category.image} alt={category.name} fill sizes="25vw" className="object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" /><div className="absolute bottom-0 p-3"><h3 className="text-sm font-bold text-white">{category.name}</h3><p className="mt-1 text-xs text-white/75">{category.items}</p></div></div></Link>)}</div>}
+          </div>
+        ) : (
+          <div className="relative px-2 md:px-5">
+            {mounted ? (
+              <Swiper
+                modules={[Autoplay, Navigation, Pagination]}
+                spaceBetween={16}
+                slidesPerView={2}
+                rewind
+                speed={700}
+                autoplay={{ delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                navigation={{ prevEl: ".category-prev", nextEl: ".category-next" }}
+                pagination={{ el: ".category-pagination", clickable: true }}
+                breakpoints={{
+                  640: { slidesPerView: 3, spaceBetween: 20 },
+                  1024: { slidesPerView: 4, spaceBetween: 20 },
+                  1280: { slidesPerView: 6, spaceBetween: 24 },
+                }}
+                className="featured-category-swiper"
+              >
+                {tiles.map((tile) => (
+                  <SwiperSlide key={tile.id}>
+                    <Tile tile={tile} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                {tiles.slice(0, 6).map((tile) => (
+                  <Tile key={tile.id} tile={tile} />
+                ))}
+              </div>
+            )}
 
-          {/* Previous */}
-          <button
-            type="button"
-            className="category-prev absolute left-0 md:-left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg flex items-center justify-center text-gray-800 dark:text-white hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-300"
-            aria-label="Previous categories"
-          >
-            <ChevronLeft size={22} />
-          </button>
+            <button
+              type="button"
+              className="category-prev absolute left-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800 shadow-lg transition-all duration-300 hover:border-[#16863D] hover:bg-[#16863D] hover:text-white md:-left-2 md:h-11 md:w-11"
+              aria-label="Previous categories"
+            >
+              <ChevronLeft size={22} />
+            </button>
+            <button
+              type="button"
+              className="category-next absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800 shadow-lg transition-all duration-300 hover:border-[#16863D] hover:bg-[#16863D] hover:text-white md:-right-2 md:h-11 md:w-11"
+              aria-label="Next categories"
+            >
+              <ChevronRight size={22} />
+            </button>
+          </div>
+        )}
 
-          {/* Next */}
-          <button
-            type="button"
-            className="category-next absolute right-0 md:-right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg flex items-center justify-center text-gray-800 dark:text-white hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-300"
-            aria-label="Next categories"
-          >
-            <ChevronRight size={22} />
-          </button>
-        </div>
-
-        {/* Pagination */}
-        <div className="category-pagination flex justify-center mt-8" />
+        <div className="category-pagination mt-8 flex justify-center" />
       </div>
 
       <style jsx global>{`
@@ -247,35 +131,16 @@ const FeaturedCategories = () => {
           margin: 0 4px;
           transition: all 0.3s ease;
         }
-
         .category-pagination .swiper-pagination-bullet-active {
           width: 28px;
           border-radius: 999px;
-          background: #2563eb;
+          background: #16863d;
         }
-
         .featured-category-swiper {
           padding: 4px 2px 8px;
         }
-
         .featured-category-swiper .swiper-slide {
           height: auto;
-        }
-
-        @media (max-width: 639px) {
-          .category-prev,
-          .category-next {
-            width: 36px;
-            height: 36px;
-          }
-
-          .category-prev {
-            left: -4px;
-          }
-
-          .category-next {
-            right: -4px;
-          }
         }
       `}</style>
     </section>

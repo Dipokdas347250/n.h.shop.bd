@@ -1,462 +1,143 @@
-
 "use client";
 
-import React, { useMemo, useState } from "react";
-import Image from "next/image";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import image from "../../../public/images/image.jpg"
-import {
-  ShoppingCart,
-  Heart,
-  Star,
-  Zap,
-  Search,
-  SlidersHorizontal,
-} from "lucide-react";
+import { Search, ShoppingCart, SlidersHorizontal } from "lucide-react";
 import { useShop } from "../../app/common/ShopContext";
 import { useStoreCatalog } from "../../app/common/StoreCatalogContext";
-import { storeRequest } from "../../lib/storeApi";
+import { useLanguage } from "../../app/common/LanguageContext";
+import ProductCard from "../common/ProductCard";
 
-const products = [
-  {
-    id: 1,
-    name: "Premium Wireless Headphone",
-    category: "Electronics",
-    image: image,
-    price: 2499,
-    oldPrice: 3499,
-    discount: 29,
-    rating: 4.8,
-    reviews: 124,
-  },
-  {
-    id: 2,
-    name: "Men's Premium Casual Shirt",
-    category: "Men's Fashion",
-    image: image,
-    price: 1199,
-    oldPrice: 1699,
-    discount: 29,
-    rating: 4.7,
-    reviews: 89,
-  },
-  {
-    id: 3,
-    name: "Smart Watch Series 8",
-    category: "Electronics",
-    image: image,
-    price: 3299,
-    oldPrice: 4499,
-    discount: 27,
-    rating: 4.9,
-    reviews: 210,
-  },
-  {
-    id: 4,
-    name: "Women's Stylish Handbag",
-    category: "Women's Fashion",
-    image: image,
-    price: 1499,
-    oldPrice: 2199,
-    discount: 32,
-    rating: 4.6,
-    reviews: 76,
-  },
-  {
-    id: 5,
-    name: "Running Sports Shoes",
-    category: "Shoes",
-    image: image,
-    price: 1899,
-    oldPrice: 2699,
-    discount: 30,
-    rating: 4.8,
-    reviews: 156,
-  },
-  {
-    id: 6,
-    name: "Premium Skin Care Set",
-    category: "Beauty",
-    image:image,
-    price: 999,
-    oldPrice: 1499,
-    discount: 33,
-    rating: 4.7,
-    reviews: 98,
-  },
-  {
-    id: 7,
-    name: "Men's Premium Sneakers",
-    category: "Shoes",
-    image:image,
-    price: 2299,
-    oldPrice: 3199,
-    discount: 28,
-    rating: 4.8,
-    reviews: 145,
-  },
-  {
-    id: 8,
-    name: "Bluetooth Portable Speaker",
-    category: "Electronics",
-    image: image,
-    price: 1599,
-    oldPrice: 2299,
-    discount: 30,
-    rating: 4.6,
-    reviews: 87,
-  },
-  {
-    id: 9,
-    name: "Women's Summer Dress",
-    category: "Women's Fashion",
-    image: image,
-    price: 1399,
-    oldPrice: 1999,
-    discount: 30,
-    rating: 4.7,
-    reviews: 112,
-  },
-  {
-    id: 10,
-    name: "Modern LED Table Lamp",
-    category: "Home & Living",
-    image: image,
-    price: 899,
-    oldPrice: 1299,
-    discount: 31,
-    rating: 4.5,
-    reviews: 64,
-  },
-  {
-    id: 11,
-    name: "Smartphone Fast Charger",
-    category: "Electronics",
-    image: image,
-    price: 699,
-    oldPrice: 999,
-    discount: 30,
-    rating: 4.6,
-    reviews: 132,
-  },
-  {
-    id: 12,
-    name: "Premium Men's Watch",
-    category: "Accessories",
-    image: image,
-    price: 1999,
-    oldPrice: 2899,
-    discount: 31,
-    rating: 4.8,
-    reviews: 91,
-  },
-];
-
-const categories = [
-  "All",
-  "Electronics",
-  "Men's Fashion",
-  "Women's Fashion",
-  "Shoes",
-  "Beauty",
-  "Home & Living",
-  "Accessories",
-];
+const ALL = "__all__";
 
 const AllProducts = ({ initialSearch = "" }) => {
-  const router = useRouter();
-  const { products, loading } = useStoreCatalog();
+  const { t, formatNumber } = useLanguage();
+  const { products, categories, loading } = useStoreCatalog();
+  const { cartCount } = useShop();
   const [search, setSearch] = useState(initialSearch);
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState(ALL);
   const [sort, setSort] = useState("default");
-  const [categoryOptions, setCategoryOptions] = useState(categories);
-  const { cart, wishlist, addToCart, toggleWishlist } = useShop();
+  const [lastInitialSearch, setLastInitialSearch] = useState(initialSearch);
 
-  React.useEffect(() => {
-    storeRequest("/products/allCategory")
-      .then((items) => {
-        if (Array.isArray(items) && items.length) {
-          setCategoryOptions(["All", ...items.map((item) => item.name).filter(Boolean)]);
-        }
-      })
-      .catch(() => {});
-  }, []);
+  // A fresh `?query=` from the navbar replaces whatever is in the box.
+  if (initialSearch !== lastInitialSearch) {
+    setLastInitialSearch(initialSearch);
+    setSearch(initialSearch);
+  }
 
-  const filteredProducts = useMemo(() => {
-    let result = products.filter((product) => {
-      const productName = String(product.name ?? "");
-      const productCategory = String(product.category ?? "");
-      const searchTerm = search.toLowerCase();
-      const matchSearch =
-        productName.toLowerCase().includes(searchTerm) ||
-        productCategory.toLowerCase().includes(searchTerm);
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase();
 
-      const matchCategory =
-        category === "All" || productCategory === category;
-
-      return matchSearch && matchCategory;
+    const result = products.filter((product) => {
+      const matchesSearch =
+        !term ||
+        product.name.toLowerCase().includes(term) ||
+        product.category.toLowerCase().includes(term) ||
+        product.description.toLowerCase().includes(term);
+      const matchesCategory = category === ALL || product.categorySlug === category;
+      return matchesSearch && matchesCategory;
     });
 
-    if (sort === "low") {
-      result.sort((a, b) => a.price - b.price);
-    }
-
-    if (sort === "high") {
-      result.sort((a, b) => b.price - a.price);
-    }
-
-    if (sort === "rating") {
-      result.sort((a, b) => b.rating - a.rating);
-    }
-
-    if (sort === "discount") {
-      result.sort((a, b) => b.discount - a.discount);
-    }
-
-    return result;
+    // Sort a copy so the catalogue in context is never reordered in place.
+    const sorted = [...result];
+    if (sort === "low") sorted.sort((a, b) => a.price - b.price);
+    if (sort === "high") sorted.sort((a, b) => b.price - a.price);
+    if (sort === "rating") sorted.sort((a, b) => b.rating - a.rating);
+    if (sort === "discount") sorted.sort((a, b) => b.discount - a.discount);
+    return sorted;
   }, [products, search, category, sort]);
 
-  const buyNow = (product) => {
-    addToCart(product);
-    router.push(`/checkout?product=${product.id}`);
-  };
+  const categoryOptions = [{ slug: ALL, name: t("products.all") }, ...categories.map((item) => ({ slug: item.slug, name: item.name }))];
 
   return (
-    <section className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 transition-colors">
-
+    <section className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
-
-        {/* Page Header */}
-        <div className="text-center mb-10">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#16863D] dark:text-emerald-400">
-            Shop Everything
-          </p>
-
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mt-2">
-            All Products
-          </h1>
-
-          <p className="text-gray-600 dark:text-gray-400 mt-3">
-            Explore our complete collection of premium products.
-          </p>
+        <div className="mb-10 text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#16863D]">{t("products.eyebrow")}</p>
+          <h1 className="mt-2 text-3xl font-bold text-gray-900 md:text-5xl">{t("products.title")}</h1>
+          <p className="mt-3 text-gray-600">{t("products.subtitle")}</p>
         </div>
 
-        {loading && <p className="mb-8 text-center text-gray-500">Loading products...</p>}
-
-        {/* Search + Sort */}
-        <div className="flex flex-col lg:flex-row gap-4 mb-8">
-
-          {/* Search */}
+        <div className="mb-8 flex flex-col gap-4 lg:flex-row">
           <div className="relative flex-1">
-            <Search
-              size={20}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-
+            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
-              type="text"
-              placeholder="Search products..."
+              type="search"
+              placeholder={t("products.searchPlaceholder")}
+              aria-label={t("common.search")}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-white py-3.5 pl-12 pr-4 text-gray-900 outline-none focus:ring-2 focus:ring-[#16863D] dark:border-gray-800 dark:bg-gray-900 dark:text-white"
+              onChange={(event) => setSearch(event.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-white py-3.5 pl-12 pr-4 text-gray-900 outline-none focus:ring-2 focus:ring-[#16863D]"
             />
           </div>
 
-          {/* Sort */}
           <div className="relative">
-            <SlidersHorizontal
-              size={18}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-
+            <SlidersHorizontal size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <select
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="appearance-none w-full lg:w-56 pl-11 pr-5 py-3.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white outline-none"
+              onChange={(event) => setSort(event.target.value)}
+              aria-label={t("products.sortBy")}
+              className="w-full appearance-none rounded-xl border border-gray-200 bg-white py-3.5 pl-11 pr-5 text-gray-900 outline-none lg:w-56"
             >
-              <option value="default">Sort By</option>
-              <option value="low">Price: Low to High</option>
-              <option value="high">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
-              <option value="discount">Biggest Discount</option>
+              <option value="default">{t("products.sortBy")}</option>
+              <option value="low">{t("products.sortLowHigh")}</option>
+              <option value="high">{t("products.sortHighLow")}</option>
+              <option value="rating">{t("products.sortRating")}</option>
+              <option value="discount">{t("products.sortDiscount")}</option>
             </select>
           </div>
         </div>
 
-        {/* Categories */}
-        <div className="flex gap-3 overflow-x-auto pb-4 mb-8 scrollbar-hide">
-          {categoryOptions.map((item) => (
+        <div className="scrollbar-hide mb-8 flex gap-3 overflow-x-auto pb-4">
+          {categoryOptions.map((option) => (
             <button
-              key={item}
-              onClick={() => setCategory(item)}
-              className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition ${
-                category === item
+              key={option.slug}
+              type="button"
+              onClick={() => setCategory(option.slug)}
+              aria-pressed={category === option.slug}
+              className={`whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+                category === option.slug
                   ? "bg-[#062B63] text-white"
-                  : "border border-gray-200 bg-white text-gray-700 hover:border-[#16863D] dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
+                  : "border border-gray-200 bg-white text-gray-700 hover:border-[#16863D]"
               }`}
             >
-              {item}
+              {option.name}
             </button>
           ))}
         </div>
 
-        {/* Result Count */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            Showing{" "}
-            <span className="font-semibold text-gray-900 dark:text-white">
-              {filteredProducts.length}
-            </span>{" "}
-            products
-          </p>
-
-          {cart.length > 0 && (
+        <div className="mb-6 flex items-center justify-between">
+          <p className="text-sm text-gray-600">{t("products.showing", { count: formatNumber(filtered.length) })}</p>
+          {cartCount > 0 && (
             <Link
               href="/cart"
-              className="flex items-center gap-2 rounded-lg bg-[#16863D] px-4 py-2 font-semibold text-white transition hover:bg-[#0f6d31]"
+              className="flex items-center gap-2 rounded-lg bg-[#16863D] px-4 py-2 font-semibold text-white transition hover:bg-[#0f6d30]"
             >
               <ShoppingCart size={17} />
-              Cart ({cart.length})
+              {t("nav.cart")} ({formatNumber(cartCount)})
             </Link>
           )}
         </div>
 
-        {/* Products */}
-        {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="group bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:shadow-2xl transition-all duration-300"
-              >
-
-                {/* Image */}
-                <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
-
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-110"
-                  />
-
-                  {/* Discount */}
-                  <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">
-                    -{product.discount}%
-                  </span>
-
-                  {/* Wishlist */}
-                  <button
-                    onClick={() => toggleWishlist(product)}
-                    className="absolute top-3 right-3 w-10 h-10 bg-white dark:bg-gray-900 rounded-full shadow-md flex items-center justify-center hover:scale-110 transition"
-                  >
-                    <Heart
-                      size={19}
-                      className={
-                        wishlist.some((item) => item.id === product.id)
-                          ? "fill-red-500 text-red-500"
-                          : "text-gray-700 dark:text-white"
-                      }
-                    />
-                  </button>
-                </div>
-
-                {/* Details */}
-                <div className="p-5">
-
-                  {product.categorySlug ? (
-                    <Link href={`/featuredCategories/${product.categorySlug}`} className="mb-2 block text-xs font-semibold text-[#16863D] hover:underline dark:text-emerald-400">
-                      {product.category}
-                    </Link>
-                  ) : (
-                    <p className="mb-2 text-xs font-semibold text-[#16863D] dark:text-emerald-400">{product.category}</p>
-                  )}
-
-                  <Link href={`/allproduct/${product.id}`}>
-                    <h2 className="line-clamp-1 text-lg font-semibold text-gray-900 transition hover:text-[#16863D] dark:text-white">
-                      {product.name}
-                    </h2>
-                  </Link>
-
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mt-2">
-                    <div className="flex items-center gap-1">
-                      <Star
-                        size={15}
-                        className="fill-yellow-400 text-yellow-400"
-                      />
-                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                        {product.rating}
-                      </span>
-                    </div>
-
-                    <span className="text-xs text-gray-500">
-                      ({product.reviews})
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-center gap-3 mt-4">
-                    <span className="text-2xl font-bold text-[#062B63] dark:text-blue-300">
-                      ৳{product.price.toLocaleString()}
-                    </span>
-
-                    <span className="text-sm text-gray-400 line-through">
-                      ৳{product.oldPrice.toLocaleString()}
-                    </span>
-                  </div>
-
-                  {/* Offer */}
-                  <div className="mt-2 flex items-center gap-1 text-xs font-semibold text-[#16863D] dark:text-green-400">
-                    <Zap size={14} className="fill-current" />
-                    {product.offer}
-                  </div>
-
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    {product.description}
-                  </p>
-
-                  {/* Buttons */}
-                  <div className="grid grid-cols-2 gap-2 mt-5">
-
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="flex items-center justify-center gap-2 rounded-xl border-2 border-[#062B63] py-3 text-sm font-semibold text-[#062B63] transition hover:bg-[#062B63] hover:text-white dark:border-blue-300 dark:text-blue-300"
-                    >
-                      <ShoppingCart size={17} />
-                      Add Cart
-                    </button>
-
-                    <button
-                      onClick={() => buyNow(product)}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-[#16863D] py-3 text-sm font-semibold text-white transition hover:bg-[#0f6d31]"
-                    >
-                      <Zap size={17} />
-                      Order Now
-                    </button>
-
-                  </div>
-                </div>
-              </div>
+        {loading ? (
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} className="h-96 animate-pulse rounded-2xl bg-gray-100" />
+            ))}
+          </div>
+        ) : filtered.length ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filtered.map((product) => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (
-          /* No Product */
-          <div className="text-center py-20">
-            <div className="text-5xl mb-4">🛍️</div>
-
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-              No Products Found
-            </h3>
-
-            <p className="text-gray-500 mt-2">
-              Try another search or category.
-            </p>
+          <div className="py-20 text-center">
+            <div className="mb-4 text-5xl" aria-hidden="true">🛍️</div>
+            <h2 className="text-2xl font-bold text-gray-900">{t("products.none")}</h2>
+            <p className="mt-2 text-gray-500">{t("products.noneHint")}</p>
           </div>
         )}
-
       </div>
     </section>
   );

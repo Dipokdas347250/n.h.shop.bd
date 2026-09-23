@@ -1,43 +1,46 @@
 "use client";
 
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
-  Search,
-  Heart,
-  ShoppingCart,
-  UserRound,
-  Menu,
-  X,
-  ChevronDown,
-  Zap,
-} from "lucide-react";
+import { Search, Heart, ShoppingCart, UserRound, Menu, X, ChevronDown, Zap, PackageSearch } from "lucide-react";
 import logo from "../../../public/images/logo.png";
 import { useShop } from "./ShopContext";
 import { useStoreAuth } from "./StoreAuthContext";
+import { useStoreCatalog } from "./StoreCatalogContext";
+import { useLanguage } from "./LanguageContext";
+import LanguageSwitcher from "./LanguageSwitcher";
+import AuthDialog from "./AuthDialog";
 
-const categories = [
-  "Baby Item",
-  "Electronics & Gadgets",
-  "Trending",
-  "Kitchen Item",
-  "Shaving Item",
-  "Perfume",
-];
+const HOTLINE = "+880 9617-100900";
+
+/** Small counter bubble on the wishlist and cart icons. */
+const CountBadge = ({ count, format }) => (
+  <span className="absolute -right-2 -top-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#16863D] px-1 text-[10px] text-white">
+    {format(count)}
+  </span>
+);
 
 const Navbar = () => {
   const router = useRouter();
+  const { t, formatNumber } = useLanguage();
   const { cartCount, wishlistCount } = useShop();
-  const { user, login, logout } = useStoreAuth();
+  const { user } = useStoreAuth();
+  const { categories } = useStoreCatalog();
   const [mobileMenu, setMobileMenu] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [loginOpen, setLoginOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [authError, setAuthError] = useState("");
+  const categoryRef = useRef(null);
+
+  useEffect(() => {
+    const closeOnOutsideClick = (event) => {
+      if (categoryRef.current && !categoryRef.current.contains(event.target)) setCategoryOpen(false);
+    };
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    return () => document.removeEventListener("mousedown", closeOnOutsideClick);
+  }, []);
 
   const submitSearch = (event) => {
     event.preventDefault();
@@ -47,583 +50,225 @@ const Navbar = () => {
   };
 
   return (
-    <header className="w-full bg-white shadow-md sticky top-0 z-50">
-
-      {/* =================================================
-          TOP NAVBAR
-      ================================================= */}
-      <div className="h-[78px] border-b border-gray-100">
-        <div className="max-w-[1500px] h-full mx-auto px-4 lg:px-6">
-
-          <div className="h-full flex items-center justify-between gap-5">
-
-            {/* ================= LOGO ================= */}
-            <Link href="/" className="shrink-0">
-
-              {/* If you have logo */}
-              <Image
-                src={logo}
-                alt="N.H.Shop BD"
-               
-                className="w-[50px] md:w-[60px] lg:w-[70px]"
-              />
-
+    <header className="sticky top-0 z-50 w-full bg-white shadow-md">
+      <div className="border-b border-gray-100">
+        <div className="mx-auto h-[78px] max-w-[1500px] px-4 lg:px-6">
+          <div className="flex h-full items-center justify-between gap-4">
+            <Link href="/" className="shrink-0" aria-label={t("app.name")}>
+              <Image src={logo} alt={t("app.name")} className="w-[50px] md:w-[60px] lg:w-[70px]" priority />
             </Link>
 
-
-            {/* ================= SEARCH ================= */}
-            <form onSubmit={submitSearch} className="hidden md:flex flex-1 max-w-[520px]">
-
-              <div className="w-full h-[45px] flex items-center border-2 border-[#16863D] rounded-md overflow-hidden">
-
+            <form onSubmit={submitSearch} className="hidden max-w-[520px] flex-1 md:flex">
+              <div className="flex h-[45px] w-full items-center overflow-hidden rounded-md border-2 border-[#16863D]">
                 <input
-                  type="text"
-                  placeholder="Search in N.H.Shop..."
-                  className="
-                    flex-1
-                    h-full
-                    px-4
-                    text-sm
-                    text-gray-700
-                    outline-none
-                  "
+                  type="search"
+                  placeholder={t("nav.searchPlaceholder")}
+                  aria-label={t("common.search")}
+                  className="h-full min-w-0 flex-1 px-4 text-sm text-gray-700 outline-none"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                 />
-
-                <button
-                  className="
-                    h-full
-                    px-6
-                    bg-[#062B63]
-                    text-white
-                    flex
-                    items-center
-                    gap-2
-                    hover:bg-[#041F4A]
-                    transition
-                  "
-                >
+                <button type="submit" className="flex h-full items-center gap-2 bg-[#062B63] px-6 text-white transition hover:bg-[#041F4A]">
                   <Search size={18} />
-
-                  <span className="hidden lg:block">
-                    Search
-                  </span>
+                  <span className="hidden lg:block">{t("common.search")}</span>
                 </button>
-
               </div>
-
             </form>
 
-
-            {/* ================= ORDER ================= */}
-            <div className="hidden xl:block leading-tight">
-
-              <p className="text-[#16863D] text-sm">
-                Order inquiry
-              </p>
-
-              <p className="text-[#062B63] text-[18px] font-bold">
-                +880 9617-100900
-              </p>
-
+            <div className="hidden leading-tight xl:block">
+              <p className="text-sm text-[#16863D]">{t("nav.orderInquiry")}</p>
+              <a href={`tel:${HOTLINE.replace(/\s/g, "")}`} className="text-[18px] font-bold text-[#062B63]">
+                {HOTLINE}
+              </a>
             </div>
 
+            <LanguageSwitcher className="hidden shrink-0 lg:flex" />
 
-            {/* ================= WISHLIST ================= */}
-            <Link
-              href="/wishlist"
-              className="hidden sm:block relative text-[#062B63] hover:text-[#16863D] transition"
-            >
-
+            <Link href="/wishlist" className="relative hidden text-[#062B63] transition hover:text-[#16863D] sm:block" aria-label={t("nav.wishlist")}>
               <Heart size={24} />
-
-              <span
-                className="
-                  absolute
-                  -top-2
-                  -right-2
-                  w-[18px]
-                  h-[18px]
-                  rounded-full
-                  bg-[#16863D]
-                  text-white
-                  text-[10px]
-                  flex
-                  items-center
-                  justify-center
-                "
-              >
-                {wishlistCount}
-              </span>
-
+              <CountBadge count={wishlistCount} format={formatNumber} />
             </Link>
 
-
-            {/* ================= CART ================= */}
-            <Link
-              href="/cart"
-              className="relative text-[#062B63] hover:text-[#16863D] transition"
-            >
-
+            <Link href="/cart" className="relative text-[#062B63] transition hover:text-[#16863D]" aria-label={t("nav.cart")}>
               <ShoppingCart size={25} />
-
-              <span
-                className="
-                  absolute
-                  -top-2
-                  -right-2
-                  w-[18px]
-                  h-[18px]
-                  rounded-full
-                  bg-[#16863D]
-                  text-white
-                  text-[10px]
-                  flex
-                  items-center
-                  justify-center
-                "
-              >
-                {cartCount}
-              </span>
-
+              <CountBadge count={cartCount} format={formatNumber} />
             </Link>
 
-
-            {/* ================= LOGIN ================= */}
             <button
               type="button"
-              onClick={() => setLoginOpen(true)}
-              className="
-                hidden sm:flex
-                h-[40px]
-                px-5
-                rounded-full
-                bg-[#062B63]
-                hover:bg-[#041F4A]
-                text-white
-                items-center
-                gap-2
-                text-sm
-                shadow-md
-                transition
-              "
+              onClick={() => (user ? router.push("/account") : setLoginOpen(true))}
+              className="hidden h-[40px] items-center gap-2 rounded-full bg-[#062B63] px-5 text-sm text-white shadow-md transition hover:bg-[#041F4A] sm:flex"
             >
-
               <UserRound size={17} />
-
-              <span>
-                {user ? user.fullname : "Login/Register"}
-              </span>
-
+              <span className="max-w-[140px] truncate">{user ? user.fullname : t("nav.login")}</span>
             </button>
 
-
-            {/* ================= MOBILE MENU ================= */}
             <button
-              onClick={() => setMobileMenu(!mobileMenu)}
-              className="md:hidden text-[#062B63]"
+              type="button"
+              onClick={() => setMobileMenu((open) => !open)}
+              className="text-[#062B63] md:hidden"
+              aria-label={t("nav.menu")}
+              aria-expanded={mobileMenu}
             >
-              {mobileMenu ? (
-                <X size={28} />
-              ) : (
-                <Menu size={28} />
-              )}
+              {mobileMenu ? <X size={28} /> : <Menu size={28} />}
             </button>
-
           </div>
         </div>
       </div>
 
-
-      {/* =================================================
-          CATEGORY NAVBAR
-      ================================================= */}
-      <div className="hidden md:block bg-[#062B63]">
-
-        <div className="max-w-[1500px] mx-auto px-4 lg:px-6">
-
-          <div className="h-[47px] flex items-center justify-between">
-
-            {/* Categories */}
+      {/* Category bar */}
+      <div className="hidden bg-[#062B63] md:block">
+        <div className="mx-auto max-w-[1500px] px-4 lg:px-6">
+          <div className="flex h-[47px] items-center justify-between">
             <nav className="flex items-center gap-6 lg:gap-9">
-
-              <Link
-                href="/"
-                className="
-                  text-white
-                  text-sm
-                  font-medium
-                  hover:text-[#8BE28F]
-                  transition
-                "
-              >
-                Home
+              <Link href="/" className="text-sm font-medium text-white transition hover:text-[#8BE28F]">
+                {t("nav.home")}
               </Link>
 
-
-              {/* Category */}
-              <div className="relative">
-
+              <div className="relative" ref={categoryRef}>
                 <button
-                  onClick={() => setCategoryOpen(!categoryOpen)}
-                  className="
-                    flex
-                    items-center
-                    gap-1
-                    text-white
-                    text-sm
-                    font-medium
-                    hover:text-[#8BE28F]
-                    transition
-                  "
+                  type="button"
+                  onClick={() => setCategoryOpen((open) => !open)}
+                  aria-expanded={categoryOpen}
+                  className="flex items-center gap-1 text-sm font-medium text-white transition hover:text-[#8BE28F]"
                 >
-
-                  Categories
-
-                  <ChevronDown
-                    size={16}
-                    className={`transition ${
-                      categoryOpen ? "rotate-180" : ""
-                    }`}
-                  />
-
+                  {t("nav.categories")}
+                  <ChevronDown size={16} className={categoryOpen ? "rotate-180 transition" : "transition"} />
                 </button>
 
-
-                {/* Dropdown */}
                 {categoryOpen && (
-                  <div
-                    className="
-                      absolute
-                      top-[40px]
-                      left-0
-                      w-[230px]
-                      bg-white
-                      rounded-md
-                      shadow-xl
-                      border
-                      border-gray-100
-                      overflow-hidden
-                      z-50
-                    "
-                  >
-
-                    {categories.map((category) => (
-                      <Link
-                        key={category}
-                        href={`/allproduct?query=${encodeURIComponent(category)}`}
-                        className="
-                          block
-                          px-5
-                          py-3
-                          text-sm
-                          text-gray-700
-                          hover:bg-[#EAF7EF]
-                          hover:text-[#16863D]
-                          transition
-                        "
-                      >
-                        {category}
-                      </Link>
-                    ))}
-
+                  <div className="absolute left-0 top-[40px] z-50 max-h-[70vh] w-[230px] overflow-y-auto rounded-md border border-gray-100 bg-white shadow-xl">
+                    {categories.length ? (
+                      categories.map((category) => (
+                        <Link
+                          key={category._id}
+                          href={`/featuredCategories/${category.slug}`}
+                          onClick={() => setCategoryOpen(false)}
+                          className="block px-5 py-3 text-sm text-gray-700 transition hover:bg-[#EAF7EF] hover:text-[#16863D]"
+                        >
+                          {category.name}
+                        </Link>
+                      ))
+                    ) : (
+                      <p className="px-5 py-3 text-sm text-gray-500">{t("common.loading")}</p>
+                    )}
                   </div>
                 )}
-
               </div>
-
 
               {categories.slice(0, 5).map((category) => (
                 <Link
-                  key={category}
-                  href={`/allproduct?query=${encodeURIComponent(category)}`}
-                  className="
-                    hidden lg:block
-                    text-white
-                    text-sm
-                    font-medium
-                    whitespace-nowrap
-                    hover:text-[#8BE28F]
-                    transition
-                  "
+                  key={category._id}
+                  href={`/featuredCategories/${category.slug}`}
+                  className="hidden whitespace-nowrap text-sm font-medium text-white transition hover:text-[#8BE28F] lg:block"
                 >
-                  {category}
+                  {category.name}
                 </Link>
               ))}
-
             </nav>
 
-
-            {/* Flash Sale */}
-            <Link
-              href="/flash-sale"
-              className="
-                h-[35px]
-                px-4
-                border
-                border-white
-                rounded-md
-                flex
-                items-center
-                gap-2
-                text-white
-                text-sm
-                font-semibold
-                hover:bg-white
-                hover:text-[#062B63]
-                transition
-              "
-            >
-
-              <Zap size={17} />
-
-              FLASH SALE
-
-            </Link>
-
+            <div className="flex items-center gap-3">
+              <Link
+                href="/track-order"
+                className="flex h-[35px] items-center gap-2 rounded-md px-3 text-sm font-medium text-white transition hover:text-[#8BE28F]"
+              >
+                <PackageSearch size={17} />
+                {t("nav.trackOrder")}
+              </Link>
+              <Link
+                href="/flash-sale"
+                className="flex h-[35px] items-center gap-2 rounded-md border border-white px-4 text-sm font-semibold text-white transition hover:bg-white hover:text-[#062B63]"
+              >
+                <Zap size={17} />
+                {t("nav.flashSale")}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
-
-      {/* =================================================
-          MOBILE MENU
-      ================================================= */}
+      {/* Mobile menu */}
       {mobileMenu && (
-        <div className="md:hidden bg-white border-t shadow-lg">
-
-          {/* Mobile Search */}
-          <div className="p-4">
-
-            <form onSubmit={submitSearch}
-              className="
-                h-[45px]
-                flex
-                border-2
-                border-[#16863D]
-                rounded-md
-                overflow-hidden
-              "
-            >
-
+        <div className="border-t bg-white shadow-lg md:hidden">
+          <div className="flex items-center justify-between gap-3 p-4">
+            <form onSubmit={submitSearch} className="flex h-[45px] flex-1 overflow-hidden rounded-md border-2 border-[#16863D]">
               <input
-                type="text"
-                placeholder="Search in N.H.Shop..."
-                className="
-                  flex-1
-                  min-w-0
-                  px-3
-                  text-sm
-                  outline-none
-                "
+                type="search"
+                placeholder={t("nav.searchPlaceholder")}
+                aria-label={t("common.search")}
+                className="min-w-0 flex-1 px-3 text-sm outline-none"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
               />
-
-              <button className="px-4 bg-[#062B63] text-white">
+              <button type="submit" className="bg-[#062B63] px-4 text-white" aria-label={t("common.search")}>
                 <Search size={19} />
               </button>
-
             </form>
-
+            <LanguageSwitcher compact />
           </div>
 
-
-          {/* Mobile Links */}
           <nav className="border-t">
-
-            <Link
-              href="/"
-              onClick={() => setMobileMenu(false)}
-              className="
-                block
-                px-5
-                py-3
-                border-b
-                text-[#062B63]
-                font-medium
-              "
-            >
-              Home
-            </Link>
-
-
-            {/* Mobile Categories */}
-            <div className="border-b">
-
-              <button
-                onClick={() => setCategoryOpen(!categoryOpen)}
-                className="
-                  w-full
-                  px-5
-                  py-3
-                  flex
-                  justify-between
-                  items-center
-                  text-[#062B63]
-                  font-medium
-                "
+            {[
+              { href: "/", label: t("nav.home") },
+              { href: "/allproduct", label: t("nav.allProducts") },
+              { href: "/trending", label: t("nav.trending") },
+              { href: "/flash-sale", label: t("nav.flashSale") },
+              { href: "/wishlist", label: t("nav.wishlist") },
+              { href: "/track-order", label: t("nav.trackOrder") },
+              { href: "/account", label: t("nav.account") },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenu(false)}
+                className="block border-b px-5 py-3 font-medium text-[#062B63]"
               >
+                {item.label}
+              </Link>
+            ))}
 
-                Categories
-
-                <ChevronDown
-                  size={18}
-                  className={`transition ${
-                    categoryOpen ? "rotate-180" : ""
-                  }`}
-                />
-
+            <div className="border-b">
+              <button
+                type="button"
+                onClick={() => setCategoryOpen((open) => !open)}
+                aria-expanded={categoryOpen}
+                className="flex w-full items-center justify-between px-5 py-3 font-medium text-[#062B63]"
+              >
+                {t("nav.categories")}
+                <ChevronDown size={18} className={categoryOpen ? "rotate-180 transition" : "transition"} />
               </button>
-
-
               {categoryOpen && (
                 <div className="bg-[#EAF7EF]">
-
                   {categories.map((category) => (
                     <Link
-                      key={category}
-                      href="#"
+                      key={category._id}
+                      href={`/featuredCategories/${category.slug}`}
                       onClick={() => setMobileMenu(false)}
-                      className="
-                        block
-                        px-9
-                        py-3
-                        border-t
-                        text-sm
-                        text-[#062B63]
-                        hover:text-[#16863D]
-                      "
+                      className="block border-t px-9 py-3 text-sm text-[#062B63] hover:text-[#16863D]"
                     >
-                      {category}
+                      {category.name}
                     </Link>
                   ))}
-
                 </div>
               )}
-
             </div>
-
-
-            <Link
-              href="/allproduct"
-              onClick={() => setMobileMenu(false)}
-              className="block px-5 py-3 border-b text-[#062B63]"
-            >
-              Products
-            </Link>
-
-
-            <Link
-              href="/allproduct?sort=discount"
-              onClick={() => setMobileMenu(false)}
-              className="block px-5 py-3 border-b text-[#062B63]"
-            >
-              Trending
-            </Link>
-
-
-            <Link
-              href="/flash-sale"
-              onClick={() => setMobileMenu(false)}
-              className="
-                flex
-                items-center
-                gap-2
-                px-5
-                py-3
-                border-b
-                text-[#16863D]
-                font-semibold
-              "
-            >
-              <Zap size={18} />
-              Flash Sale
-            </Link>
-
-
-            <Link
-              href="/wishlist"
-              onClick={() => setMobileMenu(false)}
-              className="
-                flex
-                items-center
-                gap-2
-                px-5
-                py-3
-                border-b
-                text-[#062B63]
-              "
-            >
-              <Heart size={19} />
-              Wishlist
-            </Link>
-
-
-            <Link
-              href="/account"
-              onClick={() => setMobileMenu(false)}
-              className="
-                flex
-                items-center
-                gap-2
-                px-5
-                py-3
-                border-b
-                text-[#062B63]
-              "
-            >
-              <UserRound size={19} />
-              My Account
-            </Link>
-
 
             <button
               type="button"
-              onClick={() => { setLoginOpen(true); setMobileMenu(false); }}
-              className="
-                block
-                mx-5
-                my-4
-                py-3
-                text-center
-                bg-[#16863D]
-                hover:bg-[#0f6d30]
-                text-white
-                rounded-full
-                font-medium
-                transition
-              "
+              onClick={() => {
+                setMobileMenu(false);
+                if (user) router.push("/account");
+                else setLoginOpen(true);
+              }}
+              className="mx-5 my-4 block w-[calc(100%-2.5rem)] rounded-full bg-[#16863D] py-3 text-center font-medium text-white transition hover:bg-[#0f6d30]"
             >
-              Login / Register
+              {user ? user.fullname : t("nav.login")}
             </button>
-
           </nav>
-
         </div>
       )}
 
-      {loginOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#062B63]/60 p-4" onClick={() => setLoginOpen(false)}>
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-[#16863D]">Welcome back</p>
-                <h2 className="mt-1 text-2xl font-bold text-[#062B63]">Login or register</h2>
-              </div>
-              <button type="button" onClick={() => setLoginOpen(false)} aria-label="Close login dialog" className="text-gray-500 hover:text-[#062B63]"><X size={22} /></button>
-            </div>
-            {user ? <div className="mt-6 space-y-4"><p className="text-gray-600">Signed in as {user.email}</p><button type="button" onClick={async () => { await logout(); setLoginOpen(false); }} className="w-full rounded-lg bg-red-500 px-4 py-3 font-semibold text-white">Logout</button></div> : <form onSubmit={async (event) => { event.preventDefault(); setAuthError(""); try { await login({ email, password }); setLoginOpen(false); } catch (error) { setAuthError(error.message); } }} className="mt-6 space-y-4">
-              <input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email address" className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-[#16863D]" />
-              <input type="password" required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Password" className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-[#16863D]" />
-              {authError && <p className="text-sm text-red-500">{authError}</p>}
-              <button type="submit" className="w-full rounded-lg bg-[#062B63] px-4 py-3 font-semibold text-white transition hover:bg-[#041F4A]">Continue</button>
-            </form>}
-          </div>
-        </div>
-      )}
-
+      <AuthDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
     </header>
   );
 };

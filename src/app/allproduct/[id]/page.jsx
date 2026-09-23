@@ -1,15 +1,29 @@
-"use client";
-
-import { notFound, useParams } from "next/navigation";
 import ProductDetailClient from "./ProductDetailClient";
-import { useStoreCatalog } from "../../common/StoreCatalogContext";
+import ProductResolver from "./ProductResolver";
+import { getProduct } from "../../../lib/serverApi";
 
-export default function AllProductDetailPage() {
-  const params = useParams();
-  const { products, loading } = useStoreCatalog();
-  const product = products.find((item) => item.id === params?.id);
+/**
+ * Product detail. The product is fetched on the server so the page arrives
+ * with its content already in the HTML; if the API cannot be reached during
+ * the render, the client-side resolver takes over.
+ */
+export async function generateMetadata({ params }) {
+  const product = await getProduct((await params).id);
+  if (!product) return { title: "N H Shop" };
 
-  if (loading) return <div className="p-10 text-center text-gray-500">Loading product...</div>;
-  if (!product) return notFound();
+  return {
+    title: `${product.title} | N H Shop`,
+    description: product.description.slice(0, 160),
+    openGraph: {
+      title: product.title,
+      description: product.description.slice(0, 160),
+      images: product.image ? [product.image] : [],
+    },
+  };
+}
+
+export default async function ProductDetailPage({ params }) {
+  const product = await getProduct((await params).id);
+  if (!product) return <ProductResolver />;
   return <ProductDetailClient product={product} />;
 }
