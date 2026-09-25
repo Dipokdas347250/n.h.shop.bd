@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import fallbackImage from "../../../public/images/image.jpg";
 import { storeRequest } from "../../lib/storeApi";
 import { useLanguage } from "../../app/common/LanguageContext";
@@ -17,62 +17,21 @@ import "swiper/css/navigation";
 import "swiper/css/effect-fade";
 
 /** Shown until the dashboard's own banners load, and if none exist. */
-const defaultSlides = [
-  {
-    id: "default-1",
-    image: fallbackImage,
-    title: "Your choice, our promise",
-    titleBn: "আপনার পছন্দ, আমাদের অঙ্গীকার",
-    subtitle: "Genuine products, best prices",
-    subtitleBn: "ভালো পণ্য • সেরা দাম",
-    description: "We deliver original, quality products to your door anywhere in Bangladesh.",
-    descriptionBn: "সারা বাংলাদেশে অরিজিনাল ও মানসম্মত পণ্য পৌঁছে দিচ্ছি আপনার ঘরে।",
-    buttonLabel: "Shop now",
-    buttonLabelBn: "এখনই শপ করুন",
-    url: "/allproduct",
-  },
-  {
-    id: "default-2",
-    image: fallbackImage,
-    title: "Fast delivery nationwide",
-    titleBn: "সারা দেশে দ্রুত ডেলিভারি",
-    subtitle: "Simple order, simple payment",
-    subtitleBn: "সহজ অর্ডার, সহজ পেমেন্ট",
-    description: "Your order arrives safely and quickly, with cash on delivery available everywhere.",
-    descriptionBn: "আপনার অর্ডার পৌঁছে যাবে নিরাপদে ও দ্রুত, সারা দেশে ক্যাশ অন ডেলিভারি সুবিধা।",
-    buttonLabel: "Start shopping",
-    buttonLabelBn: "শপিং শুরু করুন",
-    url: "/allproduct",
-  },
-];
+const defaultSlides = [{ id: "default-1", image: fallbackImage, url: "/allproduct" }];
 
-/** One slide's visual, reused by the Swiper and the pre-hydration fallback. */
+/**
+ * One slide's visual, reused by the Swiper and the pre-hydration fallback.
+ * Image only, at a fixed 1920×720 (8:3) frame so every device shows the same
+ * picture scaled, rather than a different crop per screen size.
+ */
 function BannerSlide({ slide, priority = false }) {
   const { pick, t } = useLanguage();
-  const title = pick(slide.title, slide.titleBn) || t("app.name");
-  const subtitle = pick(slide.subtitle, slide.subtitleBn);
-  const description = pick(slide.description, slide.descriptionBn) || t("app.tagline");
-  const buttonLabel = pick(slide.buttonLabel, slide.buttonLabelBn) || t("home.shopNow");
+  const alt = pick(slide.title, slide.titleBn) || t("app.name");
 
   return (
-    <div className="relative h-[300px] w-full sm:h-[380px] md:h-[480px] lg:h-[560px]">
-      <Image src={slide.image} alt={title} fill priority={priority} sizes="100vw" className="object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#062B63]/90 via-[#062B63]/45 to-transparent" />
-      <div className="relative z-10 mx-auto flex h-full max-w-[1500px] items-center px-5 sm:px-8 md:px-12 lg:px-16">
-        <div className="max-w-[600px] text-white">
-          {subtitle && <p className="mb-3 text-xs font-bold tracking-[2px] text-[#8BE28F] sm:text-sm md:mb-5 md:text-base">{subtitle}</p>}
-          <h2 className="text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl lg:text-6xl">{title}</h2>
-          <p className="mt-3 max-w-[530px] text-sm leading-6 text-white/90 sm:text-base md:mt-5 md:text-lg md:leading-8">{description}</p>
-          <Link
-            href={slide.url || "/allproduct"}
-            className="mt-5 inline-flex items-center gap-2 rounded-md bg-[#16863D] px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-[#0f6d30] sm:px-7 sm:text-base md:mt-7"
-          >
-            {buttonLabel}
-            <ArrowRight size={18} />
-          </Link>
-        </div>
-      </div>
-    </div>
+    <Link href={slide.url || "/allproduct"} className="relative block aspect-[8/3] w-full">
+      <Image src={slide.image} alt={alt} fill priority={priority} sizes="100vw" className="object-cover" />
+    </Link>
   );
 }
 
@@ -92,12 +51,6 @@ const Banner = () => {
           image: banner.image,
           title: banner.title,
           titleBn: banner.titleBn,
-          subtitle: banner.subtitle,
-          subtitleBn: banner.subtitleBn,
-          description: banner.description,
-          descriptionBn: banner.descriptionBn,
-          buttonLabel: banner.buttonLabel,
-          buttonLabelBn: banner.buttonLabelBn,
           url: banner.url || "/allproduct",
         })));
       })

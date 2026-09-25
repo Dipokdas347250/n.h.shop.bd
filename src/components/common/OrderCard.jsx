@@ -81,7 +81,7 @@ export default function OrderCard({ order }) {
       {order.customer && (
         <p className="mt-4 border-t border-gray-100 pt-4 text-xs text-gray-500">
           <span className="font-semibold text-gray-700">{t("order.deliveryTo")}:</span> {order.customer.name},{" "}
-          {order.customer.address}, {[order.customer.city, order.customer.district, order.customer.postcode].filter(Boolean).join(", ")} ·{" "}
+          {order.customer.address}, {[order.customer.city, order.customer.district, order.customer.division, order.customer.postcode].filter(Boolean).join(", ")} ·{" "}
           {order.customer.phone}
         </p>
       )}

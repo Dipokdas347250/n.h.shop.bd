@@ -13,6 +13,7 @@ import { useLanguage } from "../common/LanguageContext";
 import AuthDialog from "../common/AuthDialog";
 import { ApiError, storeRequest } from "../../lib/storeApi";
 import { trackMetaEvent } from "../../lib/metaPixel";
+import { DIVISIONS, districtsOf, policeStationsOf } from "../../lib/bdLocations";
 
 /** Bangladeshi mobile numbers, with or without the +88 country code. */
 const BD_PHONE = /^(?:\+?88)?01[3-9]\d{8}$/;
@@ -31,10 +32,9 @@ function CheckoutContent() {
     phone: "",
     email: "",
     address: "",
-    city: "",
+    division: "",
     district: "",
-    postcode: "",
-    note: "",
+    policeStation: "",
     deliveryZone: settings.deliveryZones[0]?.key || "inside_dhaka",
     paymentMethod: "cashOnDelivery",
   });
@@ -97,6 +97,11 @@ function CheckoutContent() {
   }, [contentIds, total]);
 
   const change = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  const changeDivision = (event) =>
+    setForm((current) => ({ ...current, division: event.target.value, district: "", policeStation: "" }));
+  const districts = districtsOf(form.division);
+  const changeDistrict = (event) => setForm((current) => ({ ...current, district: event.target.value, policeStation: "" }));
+  const policeStations = policeStationsOf(form.district);
 
   const placeOrder = async (event) => {
     event.preventDefault();
@@ -120,10 +125,10 @@ function CheckoutContent() {
             phone: form.phone,
             email: form.email,
             address: form.address,
-            city: form.city,
+            // The order model's `city` field holds the police station.
+            city: form.policeStation,
             district: form.district,
-            postcode: form.postcode,
-            note: form.note,
+            division: form.division,
           },
           items: items.map((item) => ({
             product: item.id,
@@ -241,33 +246,62 @@ function CheckoutContent() {
                   <textarea id="checkout-address" required name="address" rows={2} value={form.address} onChange={change} className={inputClass} />
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <label htmlFor="checkout-city" className="mb-1 block text-sm font-medium text-gray-700">
-                      {t("checkout.city")}
-                    </label>
-                    <input id="checkout-city" required name="city" value={form.city} onChange={change} className={inputClass} />
-                  </div>
-                  <div>
-                    <label htmlFor="checkout-district" className="mb-1 block text-sm font-medium text-gray-700">
-                      {t("checkout.district")}
-                    </label>
-                    <input id="checkout-district" required name="district" value={form.district} onChange={change} className={inputClass} />
-                  </div>
+                <div>
+                  <label htmlFor="checkout-division" className="mb-1 block text-sm font-medium text-gray-700">
+                    {t("checkout.division")}
+                  </label>
+                  <select id="checkout-division" required name="division" value={form.division} onChange={changeDivision} className={inputClass}>
+                    <option value="">{t("checkout.selectDivision")}</option>
+                    {DIVISIONS.map((division) => (
+                      <option key={division.name} value={division.name}>
+                        {pick(division.name, division.nameBn)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="checkout-postcode" className="mb-1 block text-sm font-medium text-gray-700">
-                      {t("checkout.postcode")} <span className="text-gray-400">({t("common.optional")})</span>
+                    <label htmlFor="checkout-district" className="mb-1 block text-sm font-medium text-gray-700">
+                      {t("checkout.district")}
                     </label>
-                    <input id="checkout-postcode" name="postcode" value={form.postcode} onChange={change} className={inputClass} />
+                    <select
+                      id="checkout-district"
+                      required
+                      name="district"
+                      value={form.district}
+                      onChange={changeDistrict}
+                      disabled={!form.division}
+                      className={`${inputClass} disabled:bg-gray-50 disabled:text-gray-400`}
+                    >
+                      <option value="">{form.division ? t("checkout.selectDistrict") : t("checkout.selectDivisionFirst")}</option>
+                      {districts.map((district) => (
+                        <option key={district.name} value={district.name}>
+                          {pick(district.name, district.nameBn)}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
-                    <label htmlFor="checkout-note" className="mb-1 block text-sm font-medium text-gray-700">
-                      {t("checkout.note")} <span className="text-gray-400">({t("common.optional")})</span>
+                    <label htmlFor="checkout-police-station" className="mb-1 block text-sm font-medium text-gray-700">
+                      {t("checkout.policeStation")}
                     </label>
-                    <input id="checkout-note" name="note" value={form.note} onChange={change} className={inputClass} />
+                    <select
+                      id="checkout-police-station"
+                      required
+                      name="policeStation"
+                      value={form.policeStation}
+                      onChange={change}
+                      disabled={!form.district}
+                      className={`${inputClass} disabled:bg-gray-50 disabled:text-gray-400`}
+                    >
+                      <option value="">{form.district ? t("checkout.selectPoliceStation") : t("checkout.selectDistrictFirst")}</option>
+                      {policeStations.map((station) => (
+                        <option key={station.name} value={station.name}>
+                          {pick(station.name, station.nameBn)}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 

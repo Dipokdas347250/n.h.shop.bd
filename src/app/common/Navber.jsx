@@ -54,8 +54,9 @@ const Navbar = () => {
       <div className="border-b border-gray-100">
         <div className="mx-auto h-[78px] max-w-[1500px] px-4 lg:px-6">
           <div className="flex h-full items-center justify-between gap-4">
-            <Link href="/" className="shrink-0" aria-label={t("app.name")}>
+            <Link href="/" className="shrink-0 flex items-center gap-2" aria-label={t("app.name")}>
               <Image src={logo} alt={t("app.name")} className="w-[50px] md:w-[60px] lg:w-[70px]" priority />
+              <h2 className="lg:text-[30px] text-xl font-bold"><span className="text-gray-800">NH</span> <span className="text-[#16863D]">Shop</span> <span className="text-red-500">BD</span></h2>
             </Link>
 
             <form onSubmit={submitSearch} className="hidden max-w-[520px] flex-1 md:flex">
@@ -84,7 +85,7 @@ const Navbar = () => {
 
             <LanguageSwitcher className="hidden shrink-0 lg:flex" />
 
-            <Link href="/wishlist" className="relative hidden text-[#062B63] transition hover:text-[#16863D] sm:block" aria-label={t("nav.wishlist")}>
+            <Link href="/wishlist" className="relative  text-[#062B63] transition hover:text-[#16863D] " aria-label={t("nav.wishlist")}>
               <Heart size={24} />
               <CountBadge count={wishlistCount} format={formatNumber} />
             </Link>
