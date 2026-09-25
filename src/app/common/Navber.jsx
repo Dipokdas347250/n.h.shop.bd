@@ -13,7 +13,7 @@ import { useLanguage } from "./LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import AuthDialog from "./AuthDialog";
 
-const HOTLINE = "+880 9617-100900";
+const HOTLINE = "+880196794373";
 
 /** Small counter bubble on the wishlist and cart icons. */
 const CountBadge = ({ count, format }) => (
