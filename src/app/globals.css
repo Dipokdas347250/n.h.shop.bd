@@ -14,14 +14,13 @@
   --color-secondary-dark: #0f6d30;
   --color-tertiary: #546375;
 
-  /* Hind Siliguri carries the Bangla glyphs; Inter handles Latin text. */
-  --font-sans: var(--font-inter), var(--font-bangla), system-ui, sans-serif;
-  --font-nunito: var(--font-nunito), var(--font-bangla), sans-serif;
+  /* Hind Siliguri carries the Bangla glyphs; Poppins handles Latin text. */
+  --font-sans: var(--font-poppins), var(--font-bangla), system-ui, sans-serif;
   --font-bangla: var(--font-bangla), sans-serif;
 }
 
 html:lang(bn) body {
-  font-family: var(--font-bangla), var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-bangla), var(--font-poppins), system-ui, sans-serif;
 }
 
 body {

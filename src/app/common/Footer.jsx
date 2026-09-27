@@ -9,8 +9,8 @@ import logo from "../../../public/images/logo.png";
 import { useLanguage } from "./LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-const HOTLINE = "+880 9617-100900";
-const EMAIL = "support@nhshop.com.bd";
+const HOTLINE = "+880196794373";
+const EMAIL = "nhshopbd@gmail.com";
 
 const SOCIALS = [
   { href: "https://facebook.com", icon: FaFacebookF, label: "Facebook" },
@@ -92,7 +92,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-[#8BE28F]" />
-                <span>Dhaka, Bangladesh</span>
+                <span> Gazipur, Dhaka, Bangladesh</span>
               </li>
             </ul>
 

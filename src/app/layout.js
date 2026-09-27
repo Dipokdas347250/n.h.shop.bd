@@ -1,4 +1,4 @@
-import { Nunito, Inter, Hind_Siliguri } from "next/font/google";
+import { Poppins, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 import Navber from "./common/Navber";
 import Footer from "./common/Footer";
@@ -11,8 +11,13 @@ import { StoreSettingsProvider } from "./common/StoreSettingsContext";
 import { LanguageProvider } from "./common/LanguageContext";
 import MetaPixel from "./common/MetaPixel";
 
-const nunito = Nunito({ variable: "--font-nunito", subsets: ["latin"] });
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+// Poppins sets the Latin text; it has no Bangla glyphs, so Hind Siliguri
+// (below) covers Bangla.
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
 // Bangla script support, so Bangla copy renders properly rather than as boxes.
 const hindSiliguri = Hind_Siliguri({
   variable: "--font-bangla",
@@ -30,11 +35,11 @@ export default function RootLayout({ children }) {
   // visitor's saved choice is known.
   return (
     <html lang="bn">
-      <body className={`${inter.variable} ${nunito.variable} ${hindSiliguri.variable} font-sans antialiased`}>
+      <body className={`${poppins.variable} ${hindSiliguri.variable} font-sans antialiased`}>
         <LanguageProvider>
           <StoreAuthProvider>
-            <MetaPixel />
             <StoreSettingsProvider>
+              <MetaPixel />
               <StoreCatalogProvider>
                 <ShopProvider>
                   <VisitTracker />

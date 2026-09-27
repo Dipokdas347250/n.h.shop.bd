@@ -51,12 +51,16 @@ export default function VideoSection() {
             const description = pick(video.description, video.descriptionBn);
             return (
               <article key={video._id} className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900 shadow-xl">
-                <div className="relative">
-                  <video src={video.video} controls preload="metadata" className="aspect-video w-full bg-black object-cover" />
-                  <span className="pointer-events-none absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400 text-slate-950">
-                    <Play size={15} fill="currentColor" />
-                  </span>
-                </div>
+                {video.source === "youtube" && video.youtubeId ? (
+                  <YoutubePlayer id={video.youtubeId} title={title} playLabel={t("home.videoPlay")} />
+                ) : (
+                  <div className="relative">
+                    <video src={video.video} controls preload="metadata" className="aspect-video w-full bg-black object-cover" />
+                    <span className="pointer-events-none absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400 text-slate-950">
+                      <Play size={15} fill="currentColor" />
+                    </span>
+                  </div>
+                )}
                 <div className="p-5">
                   <h3 className="text-xl font-bold">{title}</h3>
                   {description && <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-300">{description}</p>}
@@ -67,5 +71,45 @@ export default function VideoSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Shows the YouTube thumbnail and only loads the player once it is clicked, so
+ * a row of videos does not pull in several YouTube players on page load.
+ */
+function YoutubePlayer({ id, title, playLabel }) {
+  const [playing, setPlaying] = useState(false);
+
+  if (playing) {
+    return (
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`}
+        title={title}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="aspect-video w-full bg-black"
+      />
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setPlaying(true)}
+      aria-label={`${playLabel}: ${title}`}
+      className="group relative block aspect-video w-full overflow-hidden bg-black"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+        alt=""
+        loading="lazy"
+        className="h-full w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100"
+      />
+      <span className="absolute inset-0 m-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-400 text-slate-950 shadow-lg transition group-hover:scale-110">
+        <Play size={26} fill="currentColor" />
+      </span>
+    </button>
   );
 }
