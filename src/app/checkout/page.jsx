@@ -207,7 +207,8 @@ function CheckoutContent() {
               <section className="space-y-4">
                 <h2 className="text-lg font-bold">{t("checkout.deliveryDetails")}</h2>
 
-                <div>
+               <div className="flex justify-between gap-3 ">
+                 <div>
                   <label htmlFor="checkout-name" className="mb-1 block text-sm font-medium text-gray-700">
                     {t("checkout.name")}
                   </label>
@@ -231,13 +232,9 @@ function CheckoutContent() {
                   />
                   <p className="mt-1 text-xs text-gray-500">{t("checkout.phoneHint")}</p>
                 </div>
+               </div>
 
-                <div>
-                  <label htmlFor="checkout-email" className="mb-1 block text-sm font-medium text-gray-700">
-                    {t("checkout.email")} <span className="text-gray-400">({t("common.optional")})</span>
-                  </label>
-                  <input id="checkout-email" name="email" type="email" value={form.email} onChange={change} className={inputClass} />
-                </div>
+               
 
                 <div>
                   <label htmlFor="checkout-address" className="mb-1 block text-sm font-medium text-gray-700">
@@ -245,8 +242,15 @@ function CheckoutContent() {
                   </label>
                   <textarea id="checkout-address" required name="address" rows={2} value={form.address} onChange={change} className={inputClass} />
                 </div>
+                 <div>
+                  <label htmlFor="checkout-email" className="mb-1 block text-sm font-medium text-gray-700">
+                    {t("checkout.email")} <span className="text-gray-400">({t("common.optional")})</span>
+                  </label>
+                  <input id="checkout-email" name="email" type="email" value={form.email} onChange={change} className={inputClass} />
+                </div>
 
-                <div>
+               <div className="flex justify-baseline gap-3">
+                 <div>
                   <label htmlFor="checkout-division" className="mb-1 block text-sm font-medium text-gray-700">
                     {t("checkout.division")}
                   </label>
@@ -304,8 +308,10 @@ function CheckoutContent() {
                     </select>
                   </div>
                 </div>
+               </div>
 
-                <div>
+                <div className="flex justify-baseline gap-3">
+                  <div>
                   <label htmlFor="checkout-zone" className="mb-1 block text-sm font-medium text-gray-700">
                     {t("checkout.deliveryArea")}
                   </label>
@@ -340,6 +346,7 @@ function CheckoutContent() {
                     <option value="cashOnDelivery">{t("checkout.cod")}</option>
                     <option value="online">{t("checkout.online")}</option>
                   </select>
+                </div>
                 </div>
               </section>
 

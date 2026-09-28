@@ -9,8 +9,8 @@ import logo from "../../../public/images/logo.png";
 import { useLanguage } from "./LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-const HOTLINE = "+880196794373";
-const EMAIL = "nhshopbd@gmail.com";
+const HOTLINE = "+8801967949373";
+const EMAIL = "www.nhshopbd@gmail.com";
 
 const SOCIALS = [
   { href: "https://facebook.com", icon: FaFacebookF, label: "Facebook" },
@@ -40,8 +40,8 @@ const Footer = () => {
       <div className="mx-auto max-w-[1500px] px-4 py-12 lg:px-6">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Image src={logo} alt={t("app.name")} className="w-[70px] brightness-0 invert" />
-            <h2 className="mt-4 text-lg font-bold">{t("footer.about")}</h2>
+            <Image src={logo} alt="" className="w-[70px]" />
+            <h2 className="mt-4 text-lg font-bold">About N H Shop BD</h2>
             <p className="mt-2 text-sm leading-6 text-white/75">{t("footer.aboutBody")}</p>
             <LanguageSwitcher className="mt-5 w-fit !border-white/20 !bg-white/10" />
           </div>

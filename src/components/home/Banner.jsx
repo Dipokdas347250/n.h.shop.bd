@@ -62,8 +62,8 @@ const Banner = () => {
   }, []);
 
   return (
-    <section className="w-full bg-white" aria-label={t("app.name")}>
-      <div className="relative w-full overflow-hidden">
+    <section className="w-full  bg-white" aria-label={t("app.name")}>
+      <div className="relative h-100 w-full overflow-hidden container mx-auto">
         {mounted ? (
           <Swiper
             modules={[Autoplay, Pagination, Navigation, EffectFade]}

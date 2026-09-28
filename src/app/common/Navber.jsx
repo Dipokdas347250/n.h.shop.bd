@@ -13,7 +13,8 @@ import { useLanguage } from "./LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import AuthDialog from "./AuthDialog";
 
-const HOTLINE = "+880196794373";
+const HOTLINE = "+8801967949373";
+const EMAIL = "www.nhshopbd@gmail.com";
 
 /** Small counter bubble on the wishlist and cart icons. */
 const CountBadge = ({ count, format }) => (
