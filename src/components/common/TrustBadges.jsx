@@ -14,7 +14,7 @@ export default function TrustBadges({ className = "" }) {
   ];
 
   return (
-    <section className={`bg-[#EAF7EF] py-10 ${className}`}>
+    <section className={`bg-[#EAF7EF] py-6 md:py-10 ${className}`}>
       <div className="container mx-auto grid gap-6 px-4 sm:grid-cols-3">
         {badges.map(({ icon: Icon, label }) => (
           <div key={label} className="flex items-center gap-3 rounded-2xl bg-white p-5 shadow-sm">

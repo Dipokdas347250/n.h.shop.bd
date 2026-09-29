@@ -50,15 +50,15 @@ const AllProducts = ({ initialSearch = "" }) => {
   const categoryOptions = [{ slug: ALL, name: t("products.all") }, ...categories.map((item) => ({ slug: item.slug, name: item.name }))];
 
   return (
-    <section className="min-h-screen bg-gray-50 py-12">
+    <section className="bg-gray-50 py-8 md:min-h-screen md:py-12">
       <div className="container mx-auto px-4">
-        <div className="mb-10 text-center">
+        <div className="mb-6 text-center md:mb-10">
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#16863D]">{t("products.eyebrow")}</p>
           <h1 className="mt-2 text-3xl font-bold text-gray-900 md:text-5xl">{t("products.title")}</h1>
           <p className="mt-3 text-gray-600">{t("products.subtitle")}</p>
         </div>
 
-        <div className="mb-8 flex flex-col gap-4 lg:flex-row">
+        <div className="mb-5 flex flex-col gap-3 md:mb-8 md:gap-4 lg:flex-row">
           <div className="relative flex-1">
             <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -88,7 +88,7 @@ const AllProducts = ({ initialSearch = "" }) => {
           </div>
         </div>
 
-        <div className="scrollbar-hide mb-8 flex gap-3 overflow-x-auto pb-4">
+        <div className="scrollbar-hide mb-5 flex gap-3 overflow-x-auto pb-2 md:mb-8 md:pb-4">
           {categoryOptions.map((option) => (
             <button
               key={option.slug}

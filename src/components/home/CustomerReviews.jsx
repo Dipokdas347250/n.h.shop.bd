@@ -56,7 +56,7 @@ const CustomerReviews = () => {
   if (loading || !total) return null;
 
   return (
-    <section className="bg-white py-16 md:py-20">
+    <section className="bg-white py-8 md:py-20">
       <div className="container mx-auto px-4">
         <SectionHeader
           centered

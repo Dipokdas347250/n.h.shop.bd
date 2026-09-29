@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Play, Video } from "lucide-react";
-import { storeRequest } from "@/lib/storeApi";
+import Link from "next/link";
+import { Play, ShoppingBag, Video } from "lucide-react";
+import { normalizeProduct, storeRequest } from "@/lib/storeApi";
 import { useLanguage } from "../../app/common/LanguageContext";
 
 export default function VideoSection() {
@@ -32,11 +33,11 @@ export default function VideoSection() {
   if (loading || !videos.length) return null;
 
   return (
-    <section className="border-y border-slate-200 bg-slate-950 py-16 text-white">
+    <section className="border-y border-slate-200 bg-slate-950 py-8 text-white md:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end md:mb-8 md:gap-4">
           <div>
-            <p className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.22em] text-emerald-300">
+            <p className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.22em] text-emerald-300">
               <Video size={16} /> {t("home.videosEyebrow")}
             </p>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t("home.videosTitle")}</h2>
@@ -45,12 +46,12 @@ export default function VideoSection() {
           <span className="text-sm text-slate-400">{t("home.videosCount", { count: formatNumber(videos.length) })}</span>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
           {videos.map((video) => {
             const title = pick(video.title, video.titleBn);
             const description = pick(video.description, video.descriptionBn);
             return (
-              <article key={video._id} className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900 shadow-xl">
+              <article key={video._id} className="flex flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900 shadow-xl">
                 {video.source === "youtube" && video.youtubeId ? (
                   <YoutubePlayer id={video.youtubeId} title={title} playLabel={t("home.videoPlay")} />
                 ) : (
@@ -61,9 +62,10 @@ export default function VideoSection() {
                     </span>
                   </div>
                 )}
-                <div className="p-5">
-                  <h3 className="text-xl font-bold">{title}</h3>
+                <div className="flex flex-1 flex-col p-4 md:p-5">
+                  <h3 className="text-lg font-bold md:text-xl">{title}</h3>
                   {description && <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-300">{description}</p>}
+                  {video.products?.length > 0 && <VideoProducts products={video.products} label={t("home.videoShop")} />}
                 </div>
               </article>
             );
@@ -71,6 +73,41 @@ export default function VideoSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+/** Horizontally scrolling strip of the products featured in a video. */
+function VideoProducts({ products, label }) {
+  const { formatPrice } = useLanguage();
+
+  return (
+    <div className="mt-auto pt-4">
+      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-300">
+        <ShoppingBag size={14} /> {label}
+      </p>
+      <div className="scrollbar-hide -mx-4 flex snap-x gap-3 overflow-x-auto px-4 md:-mx-5 md:px-5">
+        {products.map((raw) => {
+          const product = normalizeProduct(raw);
+          return (
+            <Link
+              key={product.id}
+              href={`/allproduct/${product.slug || product.id}`}
+              className="flex w-44 shrink-0 snap-start items-center gap-2.5 rounded-lg border border-slate-700 bg-slate-800 p-2 transition hover:border-emerald-400"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={product.image} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded-md bg-slate-700 object-cover" />
+              <span className="min-w-0">
+                <span className="line-clamp-2 text-xs font-medium leading-4 text-white">{product.title}</span>
+                <span className="mt-1 block text-sm font-bold text-emerald-300">
+                  {formatPrice(product.price)}
+                  {product.discount > 0 && <span className="ml-1.5 text-xs font-normal text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>}
+                </span>
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

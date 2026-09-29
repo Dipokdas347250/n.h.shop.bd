@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 export default function SectionHeader({ eyebrow, title, subtitle, actionLabel, actionHref, centered = false }) {
   if (centered) {
     return (
-      <div className="mb-10 text-center">
+      <div className="mb-6 text-center md:mb-10">
         {eyebrow && <p className="mb-2 text-sm font-semibold uppercase tracking-[0.22em] text-[#16863D]">{eyebrow}</p>}
         <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">{title}</h2>
         {subtitle && <p className="mx-auto mt-3 max-w-2xl text-gray-600">{subtitle}</p>}
@@ -14,7 +14,7 @@ export default function SectionHeader({ eyebrow, title, subtitle, actionLabel, a
   }
 
   return (
-    <div className="mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between">
+    <div className="mb-5 flex flex-col gap-3 md:mb-10 md:gap-4 md:flex-row md:items-end md:justify-between">
       <div>
         {eyebrow && <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-[#16863D]">{eyebrow}</p>}
         <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">{title}</h2>

@@ -43,7 +43,7 @@ const TopSellingProducts = () => {
   if (!loading && !displayed.length) return null;
 
   return (
-    <section className="bg-gray-50 py-16">
+    <section className="bg-gray-50 py-8 md:py-16">
       <div className="container mx-auto px-4">
         <SectionHeader
           eyebrow={t("home.topSellingEyebrow")}
@@ -68,7 +68,7 @@ const TopSellingProducts = () => {
                   slidesPerView={2}
                   pagination={{ clickable: true }}
                   autoplay={{ delay: 3000, disableOnInteraction: false }}
-                  className="top-selling-swiper !pb-10"
+                  className="top-selling-swiper !pb-8 md:!pb-10"
                 >
                   {displayed.map((product) => (
                     <SwiperSlide key={product.id} className="h-auto">
@@ -94,7 +94,7 @@ const TopSellingProducts = () => {
         )}
 
         {cartCount > 0 && (
-          <div className="mt-8 text-center">
+          <div className="mt-4 text-center md:mt-8">
             <Link
               href="/cart"
               className="inline-flex items-center gap-2 rounded-full bg-[#062B63] px-6 py-3 font-semibold text-white transition hover:scale-105"
