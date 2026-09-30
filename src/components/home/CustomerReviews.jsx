@@ -56,7 +56,7 @@ const CustomerReviews = () => {
   if (loading || !total) return null;
 
   return (
-    <section className="bg-white py-8 md:py-20">
+    <section className="bg-white py-6 md:py-20">
       <div className="container mx-auto px-4">
         <SectionHeader
           centered
@@ -70,7 +70,7 @@ const CustomerReviews = () => {
             <div className="flex transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${current * 100}%)` }}>
               {reviews.map((item) => (
                 <div key={item.id} className="min-w-full px-2 md:px-10">
-                  <div className="relative rounded-3xl border border-gray-200 bg-gray-50 p-7 md:p-10">
+                  <div className="relative rounded-3xl border border-gray-200 bg-gray-50 p-5 md:p-10">
                     <Quote size={55} className="absolute right-7 top-6 text-blue-100 md:right-10" aria-hidden="true" />
 
                     <div className="mb-6 flex gap-1">

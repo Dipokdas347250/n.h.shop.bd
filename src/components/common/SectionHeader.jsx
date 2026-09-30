@@ -5,25 +5,25 @@ import { ArrowRight } from "lucide-react";
 export default function SectionHeader({ eyebrow, title, subtitle, actionLabel, actionHref, centered = false }) {
   if (centered) {
     return (
-      <div className="mb-6 text-center md:mb-10">
-        {eyebrow && <p className="mb-2 text-sm font-semibold uppercase tracking-[0.22em] text-[#16863D]">{eyebrow}</p>}
-        <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">{title}</h2>
-        {subtitle && <p className="mx-auto mt-3 max-w-2xl text-gray-600">{subtitle}</p>}
+      <div className="mb-4 text-center md:mb-10">
+        {eyebrow && <p className="mb-1 text-xs font-semibold uppercase tracking-[0.22em] text-[#16863D] md:mb-2 md:text-sm">{eyebrow}</p>}
+        <h2 className="text-2xl font-bold text-gray-900 md:text-4xl">{title}</h2>
+        {subtitle && <p className="mx-auto mt-1.5 max-w-2xl text-sm text-gray-600 md:mt-3 md:text-base">{subtitle}</p>}
       </div>
     );
   }
 
   return (
-    <div className="mb-5 flex flex-col gap-3 md:mb-10 md:gap-4 md:flex-row md:items-end md:justify-between">
-      <div>
-        {eyebrow && <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-[#16863D]">{eyebrow}</p>}
-        <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">{title}</h2>
-        {subtitle && <p className="mt-3 max-w-2xl text-gray-600">{subtitle}</p>}
+    <div className="mb-4 flex items-end justify-between gap-3 md:mb-10 md:gap-4">
+      <div className="min-w-0">
+        {eyebrow && <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-[#16863D] md:mb-2 md:text-sm">{eyebrow}</p>}
+        <h2 className="text-2xl font-bold text-gray-900 md:text-4xl">{title}</h2>
+        {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-gray-600 md:mt-3 md:text-base">{subtitle}</p>}
       </div>
       {actionHref && (
         <Link
           href={actionHref}
-          className="inline-flex items-center gap-2 self-start rounded-full border-2 border-[#16863D] px-5 py-2.5 font-semibold text-[#062B63] transition hover:bg-[#16863D] hover:text-white"
+          className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border-2 border-[#16863D] px-3 py-1.5 text-sm font-semibold text-[#062B63] transition hover:bg-[#16863D] hover:text-white md:gap-2 md:px-5 md:py-2.5 md:text-base"
         >
           {actionLabel}
           <ArrowRight size={18} />

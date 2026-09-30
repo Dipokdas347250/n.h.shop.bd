@@ -33,15 +33,15 @@ export default function VideoSection() {
   if (loading || !videos.length) return null;
 
   return (
-    <section className="border-y border-slate-200 bg-slate-950 py-8 text-white md:py-16">
+    <section className="border-y border-slate-200 bg-slate-950 py-6 text-white md:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end md:mb-8 md:gap-4">
           <div>
             <p className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.22em] text-emerald-300">
               <Video size={16} /> {t("home.videosEyebrow")}
             </p>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t("home.videosTitle")}</h2>
-            <p className="mt-2 max-w-xl text-slate-300">{t("home.videosSubtitle")}</p>
+            <h2 className="text-2xl font-bold tracking-tight md:text-4xl">{t("home.videosTitle")}</h2>
+            <p className="mt-1.5 max-w-xl text-sm text-slate-300 md:mt-2 md:text-base">{t("home.videosSubtitle")}</p>
           </div>
           <span className="text-sm text-slate-400">{t("home.videosCount", { count: formatNumber(videos.length) })}</span>
         </div>
@@ -95,7 +95,7 @@ function VideoProducts({ products, label }) {
               className="flex w-44 shrink-0 snap-start items-center gap-2.5 rounded-lg border border-slate-700 bg-slate-800 p-2 transition hover:border-emerald-400"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={product.image} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded-md bg-slate-700 object-cover" />
+              <img src={product.image} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded-md bg-white object-contain p-0.5" />
               <span className="min-w-0">
                 <span className="line-clamp-2 text-xs font-medium leading-4 text-white">{product.title}</span>
                 <span className="mt-1 block text-sm font-bold text-emerald-300">

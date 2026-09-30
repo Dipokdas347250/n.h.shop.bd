@@ -35,8 +35,8 @@ export default function CartPage() {
                   key={`${item.id}-${item.variant?._id || "default"}`}
                   className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4"
                 >
-                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gray-100">
-                    <Image src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-gray-100 bg-white">
+                    <Image src={item.image} alt={item.name} fill sizes="80px" className="object-contain p-1" />
                   </div>
 
                   <div className="min-w-0 flex-1">

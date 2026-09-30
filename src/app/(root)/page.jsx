@@ -12,7 +12,7 @@ export default function HomePage() {
       <Banner />
       <FeaturedCategories />
       <TopSellingProducts />
-      <AllProducts />
+      <AllProducts carouselOnMobile />
       <VideoSection />
       <CustomerReviews />
       <TrustBadges />

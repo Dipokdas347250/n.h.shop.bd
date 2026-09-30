@@ -37,19 +37,24 @@ body {
   display: none;
 }
 
-/* Top Selling Products swiper */
-.top-selling-swiper .swiper-pagination {
+/* Home page product rows on phones (ProductCarousel) */
+.product-carousel .swiper-pagination {
   bottom: 0 !important;
 }
 
-.top-selling-swiper .swiper-pagination-bullet {
+.product-carousel .swiper-pagination-bullet {
   width: 7px;
   height: 7px;
   opacity: 0.4;
 }
 
-.top-selling-swiper .swiper-pagination-bullet-active {
+.product-carousel .swiper-pagination-bullet-active {
   width: 20px;
   border-radius: 10px;
   opacity: 1;
+}
+
+/* Long lists use dynamic bullets, which need every dot the same width. */
+.product-carousel .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active {
+  width: 7px;
 }

@@ -359,8 +359,8 @@ function CheckoutContent() {
                 <ul className="mt-5 space-y-3">
                   {items.map((item, index) => (
                     <li key={`${item.id}-${item.variant?._id || index}`} className="flex items-center gap-3">
-                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                        <Image src={item.image} alt={item.name} fill sizes="48px" className="object-cover" />
+                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-gray-100 bg-white">
+                        <Image src={item.image} alt={item.name} fill sizes="48px" className="object-contain p-0.5" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="line-clamp-1 text-sm font-medium">{item.name}</p>

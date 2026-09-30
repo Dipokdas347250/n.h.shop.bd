@@ -7,10 +7,15 @@ import { useShop } from "../../app/common/ShopContext";
 import { useStoreCatalog } from "../../app/common/StoreCatalogContext";
 import { useLanguage } from "../../app/common/LanguageContext";
 import ProductCard from "../common/ProductCard";
+import ProductCarousel from "../common/ProductCarousel";
 
 const ALL = "__all__";
 
-const AllProducts = ({ initialSearch = "" }) => {
+/**
+ * The searchable catalogue. With `carouselOnMobile` (the home page) phones get
+ * a sliding row instead of the full grid; the /allproduct page keeps the grid.
+ */
+const AllProducts = ({ initialSearch = "", carouselOnMobile = false }) => {
   const { t, formatNumber } = useLanguage();
   const { products, categories, loading } = useStoreCatalog();
   const { cartCount } = useShop();
@@ -50,15 +55,15 @@ const AllProducts = ({ initialSearch = "" }) => {
   const categoryOptions = [{ slug: ALL, name: t("products.all") }, ...categories.map((item) => ({ slug: item.slug, name: item.name }))];
 
   return (
-    <section className="bg-gray-50 py-8 md:min-h-screen md:py-12">
+    <section className="bg-gray-50 py-6 md:min-h-screen md:py-12">
       <div className="container mx-auto px-4">
-        <div className="mb-6 text-center md:mb-10">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#16863D]">{t("products.eyebrow")}</p>
-          <h1 className="mt-2 text-3xl font-bold text-gray-900 md:text-5xl">{t("products.title")}</h1>
-          <p className="mt-3 text-gray-600">{t("products.subtitle")}</p>
+        <div className="mb-4 text-center md:mb-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#16863D] md:text-sm">{t("products.eyebrow")}</p>
+          <h1 className="mt-1 text-2xl font-bold text-gray-900 md:mt-2 md:text-5xl">{t("products.title")}</h1>
+          <p className="mt-1.5 text-sm text-gray-600 md:mt-3 md:text-base">{t("products.subtitle")}</p>
         </div>
 
-        <div className="mb-5 flex flex-col gap-3 md:mb-8 md:gap-4 lg:flex-row">
+        <div className="mb-3 flex flex-col gap-2 md:mb-8 md:gap-4 lg:flex-row">
           <div className="relative flex-1">
             <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -67,7 +72,7 @@ const AllProducts = ({ initialSearch = "" }) => {
               aria-label={t("common.search")}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-white py-3.5 pl-12 pr-4 text-gray-900 outline-none focus:ring-2 focus:ring-[#16863D]"
+              className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-12 pr-4 text-gray-900 md:py-3.5 outline-none focus:ring-2 focus:ring-[#16863D]"
             />
           </div>
 
@@ -77,7 +82,7 @@ const AllProducts = ({ initialSearch = "" }) => {
               value={sort}
               onChange={(event) => setSort(event.target.value)}
               aria-label={t("products.sortBy")}
-              className="w-full appearance-none rounded-xl border border-gray-200 bg-white py-3.5 pl-11 pr-5 text-gray-900 outline-none lg:w-56"
+              className="w-full appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-11 pr-5 text-gray-900 md:py-3.5 outline-none lg:w-56"
             >
               <option value="default">{t("products.sortBy")}</option>
               <option value="low">{t("products.sortLowHigh")}</option>
@@ -88,14 +93,14 @@ const AllProducts = ({ initialSearch = "" }) => {
           </div>
         </div>
 
-        <div className="scrollbar-hide mb-5 flex gap-3 overflow-x-auto pb-2 md:mb-8 md:pb-4">
+        <div className="scrollbar-hide mb-3 flex gap-2 overflow-x-auto pb-1 md:mb-8 md:gap-3 md:pb-4">
           {categoryOptions.map((option) => (
             <button
               key={option.slug}
               type="button"
               onClick={() => setCategory(option.slug)}
               aria-pressed={category === option.slug}
-              className={`whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition md:px-5 md:py-2.5 ${
                 category === option.slug
                   ? "bg-[#062B63] text-white"
                   : "border border-gray-200 bg-white text-gray-700 hover:border-[#16863D]"
@@ -106,7 +111,7 @@ const AllProducts = ({ initialSearch = "" }) => {
           ))}
         </div>
 
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between md:mb-6">
           <p className="text-sm text-gray-600">{t("products.showing", { count: formatNumber(filtered.length) })}</p>
           {cartCount > 0 && (
             <Link
@@ -120,17 +125,25 @@ const AllProducts = ({ initialSearch = "" }) => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, index) => (
               <div key={index} className="h-96 animate-pulse rounded-2xl bg-gray-100" />
             ))}
           </div>
         ) : filtered.length ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            {carouselOnMobile && (
+              <div className="md:hidden">
+                {/* A new filter starts the row again from its first product. */}
+                <ProductCarousel key={`${category}|${sort}|${search.trim()}`} products={filtered} />
+              </div>
+            )}
+            <div className={`grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 ${carouselOnMobile ? "hidden md:grid" : "grid"}`}>
+              {filtered.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </>
         ) : (
           <div className="py-20 text-center">
             <div className="mb-4 text-5xl" aria-hidden="true">🛍️</div>

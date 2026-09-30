@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
                 <ShopProvider>
                   <VisitTracker />
                   <Navber />
-                  <main className="min-h-[60vh] pb-24 md:pb-0">{children}</main>
+                  <main className="min-h-[60vh]">{children}</main>
                   <MobileBottomNav />
                   <Footer />
                 </ShopProvider>

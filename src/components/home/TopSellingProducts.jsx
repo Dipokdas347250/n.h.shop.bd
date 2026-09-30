@@ -3,24 +3,18 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay } from "swiper/modules";
 import { normalizeProduct, storeRequest } from "../../lib/storeApi";
 import { useShop } from "../../app/common/ShopContext";
 import { useStoreCatalog } from "../../app/common/StoreCatalogContext";
 import { useLanguage } from "../../app/common/LanguageContext";
-import { useHasMounted } from "../../app/common/useHasMounted";
 import ProductCard from "../common/ProductCard";
+import ProductCarousel from "../common/ProductCarousel";
 import SectionHeader from "../common/SectionHeader";
-
-import "swiper/css";
-import "swiper/css/pagination";
 
 const TopSellingProducts = () => {
   const { t, formatNumber } = useLanguage();
   const { cartCount } = useShop();
   const { products: allProducts, loading } = useStoreCatalog();
-  const mounted = useHasMounted();
   const [topProducts, setTopProducts] = useState([]);
 
   useEffect(() => {
@@ -43,7 +37,7 @@ const TopSellingProducts = () => {
   if (!loading && !displayed.length) return null;
 
   return (
-    <section className="bg-gray-50 py-8 md:py-16">
+    <section className="bg-gray-50 py-6 md:py-16">
       <div className="container mx-auto px-4">
         <SectionHeader
           eyebrow={t("home.topSellingEyebrow")}
@@ -60,29 +54,8 @@ const TopSellingProducts = () => {
           </div>
         ) : (
           <>
-            <div className="block md:hidden">
-              {mounted ? (
-                <Swiper
-                  modules={[Pagination, Autoplay]}
-                  spaceBetween={12}
-                  slidesPerView={2}
-                  pagination={{ clickable: true }}
-                  autoplay={{ delay: 3000, disableOnInteraction: false }}
-                  className="top-selling-swiper !pb-8 md:!pb-10"
-                >
-                  {displayed.map((product) => (
-                    <SwiperSlide key={product.id} className="h-auto">
-                      <ProductCard product={product} compact />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
-                  {displayed.slice(0, 2).map((product) => (
-                    <ProductCard key={product.id} product={product} compact />
-                  ))}
-                </div>
-              )}
+            <div className="md:hidden">
+              <ProductCarousel products={displayed} />
             </div>
 
             <div className="hidden grid-cols-2 gap-6 md:grid lg:grid-cols-3 xl:grid-cols-4">
@@ -94,10 +67,10 @@ const TopSellingProducts = () => {
         )}
 
         {cartCount > 0 && (
-          <div className="mt-4 text-center md:mt-8">
+          <div className="mt-3 text-center md:mt-8">
             <Link
               href="/cart"
-              className="inline-flex items-center gap-2 rounded-full bg-[#062B63] px-6 py-3 font-semibold text-white transition hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-full bg-[#062B63] px-5 py-2.5 text-sm font-semibold text-white md:px-6 md:py-3 md:text-base transition hover:scale-105"
             >
               <ShoppingCart size={18} />
               {t("nav.cart")} ({formatNumber(cartCount)})

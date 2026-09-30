@@ -26,14 +26,15 @@ export default function ProductCard({ product, compact = false }) {
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:shadow-2xl">
-      <div className="relative aspect-square overflow-hidden bg-gray-100">
+      {/* Product photos come in every shape, so show all of each one on white. */}
+      <div className="relative aspect-[4/5] overflow-hidden border-b border-gray-100 bg-white">
         <Link href={detailHref} aria-label={product.name}>
           <Image
             src={product.image}
             alt={product.name}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition duration-500 group-hover:scale-110"
+            className="object-contain p-2 transition duration-500 group-hover:scale-105 sm:p-3"
           />
         </Link>
 

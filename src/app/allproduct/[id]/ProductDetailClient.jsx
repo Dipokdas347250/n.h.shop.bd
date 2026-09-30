@@ -96,8 +96,8 @@ export default function ProductDetailClient({ product }) {
 
         <div className="grid gap-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm md:grid-cols-2 md:p-8">
           <div>
-            <div className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100">
-              <Image src={activeImage} alt={product.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" priority />
+            <div className="relative aspect-square overflow-hidden rounded-2xl border border-gray-200 bg-white">
+              <Image src={activeImage} alt={product.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain p-3" priority />
             </div>
             {product.images?.length > 1 && (
               <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
@@ -107,11 +107,11 @@ export default function ProductDetailClient({ product }) {
                     type="button"
                     onClick={() => setActiveImage(image)}
                     aria-label={product.name}
-                    className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition ${
-                      activeImage === image ? "border-[#16863D]" : "border-transparent"
+                    className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition ${
+                      activeImage === image ? "border-[#16863D]" : "border-gray-200"
                     }`}
                   >
-                    <Image src={image} alt="" fill sizes="80px" className="object-cover" />
+                    <Image src={image} alt="" fill sizes="80px" className="object-contain p-1" />
                   </button>
                 ))}
               </div>

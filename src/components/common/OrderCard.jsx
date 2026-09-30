@@ -36,8 +36,8 @@ export default function OrderCard({ order }) {
         {(order.items || []).map((item, index) => (
           <li key={`${item.product || index}`} className="flex items-center gap-3">
             {item.image && (
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                <Image src={item.image} alt={item.title || ""} fill sizes="48px" className="object-cover" />
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-gray-100 bg-white">
+                <Image src={item.image} alt={item.title || ""} fill sizes="48px" className="object-contain p-0.5" />
               </div>
             )}
             <div className="min-w-0 flex-1">
