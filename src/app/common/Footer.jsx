@@ -18,6 +18,9 @@ const SOCIALS = [
   { href: "https://youtube.com", icon: FaYoutube, label: "YouTube" },
 ];
 
+// Merchant applications live in the dashboard; the link only shows once its address is configured.
+const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || "").replace(/\/+$/, "");
+
 const Footer = () => {
   const { t, formatNumber } = useLanguage();
 
@@ -33,6 +36,7 @@ const Footer = () => {
     { href: "/track-order", label: t("nav.trackOrder") },
     { href: "/account", label: t("nav.account") },
     { href: "/cart", label: t("nav.cart") },
+    ...(DASHBOARD_URL ? [{ href: `${DASHBOARD_URL}/apply`, label: t("footer.sellWithUs") }] : []),
   ];
 
   return (
