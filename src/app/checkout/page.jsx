@@ -242,14 +242,14 @@ function CheckoutContent() {
                   </label>
                   <textarea id="checkout-address" required name="address" rows={2} value={form.address} onChange={change} className={inputClass} />
                 </div>
-                 <div>
+                 {/* <div>
                   <label htmlFor="checkout-email" className="mb-1 block text-sm font-medium text-gray-700">
                     {t("checkout.email")} <span className="text-gray-400">({t("common.optional")})</span>
                   </label>
                   <input id="checkout-email" name="email" type="email" value={form.email} onChange={change} className={inputClass} />
-                </div>
+                </div> */}
 
-               <div className="flex justify-baseline gap-3">
+               {/* <div className="flex justify-baseline gap-3">
                  <div>
                   <label htmlFor="checkout-division" className="mb-1 block text-sm font-medium text-gray-700">
                     {t("checkout.division")}
@@ -308,7 +308,7 @@ function CheckoutContent() {
                     </select>
                   </div>
                 </div>
-               </div>
+               </div> */}
 
                 <div className="flex justify-baseline gap-3">
                   <div>

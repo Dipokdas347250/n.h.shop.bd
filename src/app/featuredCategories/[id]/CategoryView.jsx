@@ -17,12 +17,13 @@ export default function CategoryView({ category, products, loading = false }) {
           <ArrowLeft size={16} />
           {t("common.backHome")}
         </Link>
+        <h1 className="mt-2 text-3xl font-bold md:text-4xl mb-3">{category.name}</h1>
 
-        <div className="mb-10 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
+        {/* <div className="mb-10 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#16863D]">{t("category.eyebrow")}</p>
           <h1 className="mt-2 text-3xl font-bold md:text-4xl">{category.name}</h1>
           <p className="mt-3 max-w-2xl text-gray-600">{t("category.description", { name: category.name })}</p>
-        </div>
+        </div> */}
 
         {loading && !products.length ? (
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
